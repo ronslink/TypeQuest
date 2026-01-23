@@ -1,0 +1,46 @@
+# Development Roadmap
+
+## Phase 1: Foundation (Months 1-2)
+*   **Goal**: Functional Typing Engine & Lesson Structure.
+*   **Milestones**:
+    *   [ ] Implement precise low-latency input handler (Hardware & Screen).
+    *   [ ] Build "Smart Text" renderer (highlights, cursor, error formatting).
+    *   [ ] Design `Lesson` data model and create JSON schema.
+    *   [ ] Create Zones 1-2 (Home Row, Top Row) content.
+    *   [ ] Setup SwiftData infrastructure.
+
+## Phase 2: Core Loop & Cloud (Months 3-4)
+*   **Goal**: Progression and Persistence.
+*   **Milestones**:
+    *   [ ] Implement WPM/Accuracy calculation logic.
+    *   [ ] Build "Result Screen" with rating system (S/A/B/C).
+    *   [ ] Integrate CloudKit for user profile sync.
+    *   [ ] Create "Diagnostic Test" for onboarding.
+    *   [ ] Alpha Build Internal Release.
+
+## Phase 3: Gamification Layer (Months 5-6)
+*   **Goal**: The Fun Factor.
+*   **Milestones**:
+    *   [ ] Implement XP, Leveling, and Currency systems.
+    *   [ ] Build "Skill Tree" Map UI (Zoomable/Pannable).
+    *   [ ] Create "Shop" UI and inventory system.
+    *   [ ] Integrate Game Center for initial Achievements.
+    *   [ ] Add "Daily Streak" logic and widget.
+
+## Phase 4: Polish & Expansion (Months 7-8)
+*   **Goal**: Content Depth and Visuals.
+*   **Milestones**:
+    *   [ ] Create 100+ unique lessons (Zones 3-6).
+    *   [ ] Implement "Adaptive Practice" algorithm (Problem Key generation).
+    *   [ ] Add Localization: Spanish, French, German.
+    *   [ ] Finalize UI theming engine and animations.
+    *   [ ] Beta Testing via TestFlight (Closed Group).
+
+## Phase 5: Launch Prep (Month 9)
+*   **Goal**: Release Candidate.
+*   **Milestones**:
+    *   [ ] Integrate StoreKit 2 for Subscriptions/IAP.
+    *   [ ] Finalize Paywall UI and onboarding flow.
+    *   [ ] Comprehensive Accessibility Audit (VoiceOver, Dynamic Type).
+    *   [ ] App Store Screenshots, Privacy Policy, and Marketing Copy.
+    *   [ ] **Global Launch**.

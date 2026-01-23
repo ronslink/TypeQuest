@@ -1,0 +1,50 @@
+# Market Analysis and Pricing Strategy
+
+## Executive Summary
+The iOS typing tutor market is segmented into gamified apps for kids, rigorous speed-training tools for adults, and general educational platforms. There is a significant opportunity for a modern, high-polish app that bridges the gap between "fun/gamified" and "serious skill building" for a broad age range, utilizing the latest iOS technologies (SwiftUI, Game Center).
+
+## Competitor Landscape
+
+| App | Target Audience | Key Features | Monetization |
+| :--- | :--- | :--- | :--- |
+| **TypingClub / EdClub** | Education/Schools | Structured lessons, comprehensive stats, cross-platform | Free (basic), Paid School Editions |
+| **TapTyping** | General Users | Speed tests, heat maps, courses | Freemium (One-time unlock) |
+| **Typing Land** | Kids | 40+ Mini-games, story-driven | Free / Donation |
+| **Type Flash** | Competitive Tyers | Global leaderboards, speed racing | Ad-supported / Free |
+| **Typesy** | Serious Learners | Cloud sync, video instructors, extensive courses | Subscription / High-tier IAP |
+| **Nitro Type** | Gamers/Kids | Racing mechanics, car collection, multiplayer | Freemium (Cosmetics, Pass) |
+
+## Market Gaps & Opportunities
+1.  **Modern UX/UI**: Many existing apps have dated interfaces. A "design-first" approach using SwiftUI animations and haptics can capture users seeking a premium feel.
+2.  **Adult Gamification**: Most gamified apps cater to kids. Adults need "sophisticated gamification"—sleek progress bars, streak protections, and "professional" leagues rather than cartoony avatars.
+3.  **Adaptive Learning**: Few apps effectively use AI/ML to generate *personalized* exercises based on problem keys in real-time.
+
+## Pricing Strategy Recommendation
+
+**Recommended Model: Hybrid Freemium**
+A "Freemium" approach with a clear upgrade path is industry standard and lowers the barrier to entry.
+
+### Tiers
+
+1.  **Free Tier (The Hook)**
+    *   **Access**: First 2 difficulty levels / modules.
+    *   **Features**: Basic speed test, local progress tracking, "Quick Play" mode.
+    *   **Limitations**: Ads (optional, maybe banner only), locked advanced stats (heatmaps), locked customization (themes).
+
+2.  **Pro (Monthly/Yearly Subscription)**
+    *   **Price Point**: $4.99/month or $29.99/year.
+    *   **Target**: Serious learners, schools, families.
+    *   **Features**: Unlimited lessons, AI-driven personalized practice, full detailed analytics/heatmaps, cross-device sync (CloudKit), ad-free, all themes/cosmetics.
+
+3.  **Lifetime Unlock (Optional)**
+    *   **Price Point**: $59.99 (high anchor).
+    *   **Target**: Users averse to subscriptions.
+
+### Justification
+*   **Recurring Revenue**: Needed for server costs (leaderboards, cloud sync) and ongoing content updates (new levels, challenges).
+*   **Market Alignment**: Competitors like Typesy use subscriptions; others use high-priced one-time unlocks. Providing both gives flexibility.
+
+## Target Audience Segments
+*   **Students (K-12)**: Need engaging, story-driven progression.
+*   **Professionals**: Need efficiency, "problem key" targeting, and quick daily drills.
+*   **Seniors**: Need high contrast, accessibility features, and gentle progression curves.

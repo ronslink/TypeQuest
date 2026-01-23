@@ -1,0 +1,59 @@
+# Technology Stack & Architecture (iPadOS)
+
+## 1. High-Level Overview
+This project targets **iPadOS 18+** using a **Pure Swift** approach. We prioritize Apple First-Party frameworks to ensure maximum performance, system integration (Split View, Stage Manager), and long-term maintainability.
+
+## 2. Core Layers
+
+### 2.1 Language & Concurrency
+*   **Language**: **Swift 6.0** (Strict Concurrency enabled).
+*   **Concurrency Model**: `async/await` for all asynchronous work.
+    *   **Actors**: Used for state isolation (e.g., `SessionManager` actor to handle WPM calculations off the main thread).
+    *   **MainActor**: Strictly for UI updates and Input Event handling to ensure responsiveness.
+
+### 2.2 User Interface (UI)
+*   **Framework**: **SwiftUI** (Latest API).
+*   **Architecture**: **MVVM** (Model-View-ViewModel).
+*   **Key Components**:
+    *   `NavigationSplitView`: For the "Sidebar + Detail" desktop-class layout.
+    *   `ViewModifier`: For reusable styling (e.g., `.neumorphicStyle()`).
+    *   `Charts` (Swift Charts): For rendering real-time WPM graphs vs. personal best.
+    *   `Lottie` (Optional): for complex gamification animations (e.g., leveling up) if native SwiftUI animations are insufficient.
+
+### 2.3 Data & Persistence
+*   **Database**: **SwiftData** (Modern framework on top of Core Data).
+    *   *Why*: Simpler API, native SwiftUI integration (`@Query`), and automatic schema migration.
+*   **Schema**:
+    *   `User`: Settings, total XP, current streak.
+    *   `Session`: Timestamp, duration, detailed log of keystrokes (binary blob or related entity).
+    *   `Lesson`: Static content definitions.
+*   **Cloud Sync**: **CloudKit** (via `NSPersistentCloudKitContainer`).
+    *   *Why*: Free sync between devices, user trust, privacy-first.
+
+### 2.4 Input Engineering (The Core)
+*   **Hardware Keyboard**: **Game Controller Framework (`GCController`)**.
+    *   *Why*: Standard `UITextField` input has latency and focus issues. `GCMicroGamepad` or `GCKeyboard` allows capturing specific key codes (e.g., Left Shift vs Right Shift) even when UI focus changes.
+*   **On-Screen Keyboard**: **Custom SwiftUI Views**.
+    *   We will NOT use the system keyboard for practice. We will render a "Ghost Keyboard" visual aid.
+
+### 2.5 Audio Engine
+*   **Framework**: **AVAudioEngine**.
+    *   *Why*: `AVAudioPlayer` has startup latency. `AVAudioEngine` allows us to keep "click" samples in memory buffers for <10ms trigger time.
+*   **Mixing**: Two-channel mixer node (Channel 1: SFX, Channel 2: Music/Ambience).
+
+## 3. Gamification Services
+*   **Game Center**:
+    *   **Leaderboards**: Global rankings by WPM.
+    *   **Achievements**: "Badges" unlocked in standard Apple UI.
+    *   **Dashboard**: Users can challenge friends via iMessage integration.
+
+## 4. Dependencies
+We aim for **Zero 3rd-Party Dependencies** for the core logic.
+*   **Acceptable Exceptions**:
+    *   *ConfettiSwiftUI*: For visual rewards (if not building custom).
+    *   *KeyboardLayoutGuide* (Helper): For accurately mapping physical ISO/ANSI layouts.
+
+## 5. Development Environment
+*   **IDE**: Xcode 16+.
+*   **Minimum Target**: iPadOS 17.0 (to allow ample user base, though 18 features preferred).
+*   **CI/CD**: GitHub Actions + TestFlight.

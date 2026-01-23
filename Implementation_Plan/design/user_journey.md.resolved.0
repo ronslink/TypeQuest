@@ -1,0 +1,43 @@
+# User Journey Strategy
+
+## 1. Persona: Leo (The Student)
+**Age**: 10 | **Goal**: Learn to type for school reports | **Tech**: iPad with Magic Keyboard
+
+*   **Discovery**: Mom finds the app via "best typing games for kids" search.
+*   **Onboarding**:
+    *   Leo opens app. Bright, cheerful music plays.
+    *   "Choose your Pilot!" (Selects a Robot Avatar).
+    *   No calibration needed—starts at "Level 1: Launchpad".
+*   **The "Hook"**: He types 'F' and 'J' to charge the spaceship's battery. Immediate visual feedback (battery fills).
+*   **Engagement**: Plays for 15 minutes. Unlocks "Boots of Speed".
+*   **Retention**: Wants to beat his friend using the "Ghost Racing" feature next week.
+
+## 2. Persona: Sarah (The Professional)
+**Age**: 29 | **Goal**: Increase WPM from 45 to 80 for work efficiency | **Tech**: iPhone (during commute) and iPad Pro
+
+*   **Discovery**: App Store search for "Typing Speed Test".
+*   **Onboarding**:
+    *   Skips "Intro Movie".
+    *   Selects "Professional Mode" (Dark UI, minimal distractions).
+    *   Takes the "Placement Test". Result: 48 WPM.
+    *   App suggests: "Focus on your 'R' and 'T' reach to gain +5 WPM".
+*   **The "Hook"**: The "Heatmap" shows her exactly where she slows down. She loves the data.
+*   **Engagement**: Does a 5-minute "Coffee Break Drill" daily.
+*   **Retention**: Push notification: "Your streak is at 6 days! Don't break it."
+
+## 3. Persona: Arthur (The Senior)
+**Age**: 72 | **Goal**: Brain training and keeping up with emails | **Tech**: iPad Air
+
+*   **Discovery**: Recommended by grandson.
+*   **Onboarding**:
+    *   App detects system font size is Large, automatically adopts "High Contrast" theme.
+    *   Tutorial is slow-paced, clear voice-over explains "Home Row".
+*   **The "Hook"**: He completes a sentence without looking at his hands for the first time. "Great Job, Arthur!" appears in large text.
+*   **Engagement**: Sees it as a relaxing daily puzzle, not a race.
+*   **Retention**: Unlocking "Vintage Typewriter" sound effects brings nostalgia.
+
+## 4. UX & Accessibility Considerations
+*   **Font**: Use **San Francisco Rounded** for kids (friendlier) and **San Francisco Pro** for adults.
+*   **Color Blindness**: Avoid Red/Green only indicators for errors. Use shapes (X vs Checkmark) alongside colors.
+*   **Motion Sensitivity**: "Reduce Motion" toggle available in settings to disable paralax backgrounds.
+*   **Inputs**: Full support for `UIKeyCommand` to allow navigating the UI entirely via keyboard (no touch needed).

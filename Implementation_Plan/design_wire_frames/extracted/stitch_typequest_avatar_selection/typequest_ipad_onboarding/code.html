@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TypeQuest Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f9f506",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#23220f",
+                        "surface-dark": "#1a1a0c",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem", 
+                        "lg": "2rem", 
+                        "xl": "3rem", 
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hide for cleaner UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display h-screen w-screen overflow-hidden flex items-center justify-center p-4 md:p-6 lg:p-8">
+<!-- Main Container - Simulating iPad Landscape -->
+<main class="w-full h-full max-w-[1366px] max-h-[1024px] bg-white dark:bg-[#15150a] rounded-[2.5rem] overflow-hidden shadow-2xl ring-8 ring-[#232310] relative flex flex-row">
+<!-- Left Panel: Illustration -->
+<section class="hidden md:flex w-1/2 h-full relative overflow-hidden bg-surface-dark items-center justify-center">
+<!-- Background Gradient Effects -->
+<div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#3a3a15] via-[#1a1a0c] to-[#0d0d05] opacity-80"></div>
+<!-- Hero Image -->
+<div class="relative z-10 w-[90%] h-[80%] bg-contain bg-center bg-no-repeat transition-all duration-500 ease-in-out hover:scale-105" data-alt="Futuristic cyber robot wizard and space cat standing together in a neon landscape" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBKRnN2EAmtpco6PSHcSBg6UDmwUb1L2iOl2Vts67XuUeP0FseNIxzhByeiGbT0jcHobWJz0w6ZesMSYEW5Dpbc46VHcWwHXH-43qn24SZh278eBbwB1sdRBU88h1T7VXDH9UH1ERiHyFK021FnCs8HZf6YyJNOy8-hktO1NvvD8fwNB_Opkvy0ZsH4Xb6L6ugkwZsTIUCs-CxykGUp2unNYTp-2724e5qJAuR7rkUIk5pp3AOD1sBD23BADAj1cPGq1ifEQTVcdb4");'></div>
+<!-- Decorative floating elements -->
+<div class="absolute bottom-10 left-10 w-24 h-24 bg-primary/20 blur-[50px] rounded-full"></div>
+<div class="absolute top-20 right-20 w-32 h-32 bg-primary/10 blur-[60px] rounded-full"></div>
+</section>
+<!-- Right Panel: Controls -->
+<section class="w-full md:w-1/2 h-full flex flex-col relative bg-background-light dark:bg-background-dark p-8 lg:p-12 overflow-y-auto no-scrollbar">
+<!-- Header Area -->
+<div class="flex-none mb-8">
+<!-- Progress Dots -->
+<div class="flex gap-2 justify-center md:justify-start mb-6">
+<div class="w-8 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-[#4a4a25]"></div>
+<div class="w-2 h-2 rounded-full bg-[#4a4a25]"></div>
+</div>
+<h1 class="text-[#232310] dark:text-white text-4xl lg:text-5xl font-bold leading-tight tracking-tight mb-3">
+                    Choose Your <span class="text-primary">Hero</span>
+</h1>
+<p class="text-[#5c5c4a] dark:text-[#a3a38a] text-lg font-normal leading-relaxed max-w-md">
+                    Select the avatar that matches your typing style to begin your quest.
+                </p>
+</div>
+<!-- Selection Area -->
+<div class="flex-grow flex flex-col justify-center gap-4 py-2">
+<!-- Option 1: Robot -->
+<label class="group relative cursor-pointer">
+<input checked="" class="peer sr-only" name="hero_selection" type="radio"/>
+<div class="relative flex items-center p-4 rounded-xl border-2 border-[#dadaaf] dark:border-[#3a3a1f] bg-white dark:bg-[#1a1a0c] transition-all duration-300 ease-out hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:shadow-[0_0_20px_rgba(249,245,6,0.1)]">
+<!-- Icon Box -->
+<div class="flex-shrink-0 w-16 h-16 rounded-lg bg-[#efefdc] dark:bg-[#2a2a15] flex items-center justify-center mr-5 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl text-[#232310] dark:text-white group-hover:text-primary transition-colors">smart_toy</span>
+</div>
+<!-- Text -->
+<div class="flex-grow">
+<h3 class="text-lg font-bold text-[#232310] dark:text-white mb-0.5">Robot 'Bit'</h3>
+<p class="text-sm font-medium text-[#5c5c4a] dark:text-[#888870]">Precision &amp; Accuracy</p>
+</div>
+<!-- Check Indicator -->
+<div class="w-6 h-6 rounded-full border-2 border-[#dadaaf] dark:border-[#4a4a2f] flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary transition-colors">
+<span class="material-symbols-outlined text-sm text-black opacity-0 peer-checked:opacity-100 font-bold">check</span>
+</div>
+</div>
+</label>
+<!-- Option 2: Wizard -->
+<label class="group relative cursor-pointer">
+<input class="peer sr-only" name="hero_selection" type="radio"/>
+<div class="relative flex items-center p-4 rounded-xl border-2 border-[#dadaaf] dark:border-[#3a3a1f] bg-white dark:bg-[#1a1a0c] transition-all duration-300 ease-out hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:shadow-[0_0_20px_rgba(249,245,6,0.1)]">
+<div class="flex-shrink-0 w-16 h-16 rounded-lg bg-[#efefdc] dark:bg-[#2a2a15] flex items-center justify-center mr-5 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl text-[#232310] dark:text-white group-hover:text-primary transition-colors">auto_fix</span>
+</div>
+<div class="flex-grow">
+<h3 class="text-lg font-bold text-[#232310] dark:text-white mb-0.5">Wizard 'Spell'</h3>
+<p class="text-sm font-medium text-[#5c5c4a] dark:text-[#888870]">Speed &amp; Flow</p>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-[#dadaaf] dark:border-[#4a4a2f] flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary transition-colors">
+<span class="material-symbols-outlined text-sm text-black opacity-0 peer-checked:opacity-100 font-bold">check</span>
+</div>
+</div>
+</label>
+<!-- Option 3: Cat -->
+<label class="group relative cursor-pointer">
+<input class="peer sr-only" name="hero_selection" type="radio"/>
+<div class="relative flex items-center p-4 rounded-xl border-2 border-[#dadaaf] dark:border-[#3a3a1f] bg-white dark:bg-[#1a1a0c] transition-all duration-300 ease-out hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:shadow-[0_0_20px_rgba(249,245,6,0.1)]">
+<div class="flex-shrink-0 w-16 h-16 rounded-lg bg-[#efefdc] dark:bg-[#2a2a15] flex items-center justify-center mr-5 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl text-[#232310] dark:text-white group-hover:text-primary transition-colors">pets</span>
+</div>
+<div class="flex-grow">
+<h3 class="text-lg font-bold text-[#232310] dark:text-white mb-0.5">Cat 'Glitch'</h3>
+<p class="text-sm font-medium text-[#5c5c4a] dark:text-[#888870]">Agility &amp; Reflexes</p>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-[#dadaaf] dark:border-[#4a4a2f] flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary transition-colors">
+<span class="material-symbols-outlined text-sm text-black opacity-0 peer-checked:opacity-100 font-bold">check</span>
+</div>
+</div>
+</label>
+</div>
+<!-- Footer / CTA -->
+<div class="flex-none pt-8 mt-auto">
+<button class="w-full group relative flex items-center justify-center overflow-hidden rounded-full h-16 bg-primary text-[#232310] text-lg font-bold tracking-wide transition-all hover:brightness-110 active:scale-[0.98] shadow-[0_4px_14px_0_rgba(249,245,6,0.39)]">
+<span class="relative z-10 flex items-center gap-2">
+                        Begin Adventure
+                        <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+</span>
+<!-- Shine Effect -->
+<div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 w-full h-full skew-x-12"></div>
+</button>
+<p class="text-center text-xs text-[#5c5c4a] dark:text-[#5c5c4a] mt-4 font-medium">
+                    You can change your hero later in settings.
+                </p>
+</div>
+</section>
+</main>
+<!-- Tailwind Config for Shimmer Animation -->
+<style>
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</body></html>

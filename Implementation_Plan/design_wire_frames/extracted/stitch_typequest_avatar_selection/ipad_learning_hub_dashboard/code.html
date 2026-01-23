@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TypeQuest Learning Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f9f506",
+                        "primary-dim": "#b5b204",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#23220f",
+                        "surface-dark": "#353418",
+                        "surface-darker": "#1a1a0b",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Map Path Animation Idea (Static for now) */
+        .path-glow {
+            filter: drop-shadow(0 0 8px rgba(249, 245, 6, 0.4));
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased overflow-hidden h-screen w-screen selection:bg-primary selection:text-background-dark">
+<div class="flex h-full w-full flex-row relative">
+<!-- Sidebar Navigation -->
+<aside class="z-20 flex h-full w-24 flex-col items-center justify-between py-8 px-2 bg-surface-darker/80 backdrop-blur-xl border-r border-white/5">
+<div class="flex flex-col gap-8 items-center w-full">
+<!-- Logo Placeholder -->
+<div class="h-12 w-12 rounded-xl bg-primary flex items-center justify-center text-background-dark font-bold text-2xl shadow-[0_0_15px_rgba(249,245,6,0.4)]">
+                    TQ
+                </div>
+<!-- Nav Items -->
+<nav class="flex flex-col gap-6 w-full items-center mt-8">
+<button class="group flex flex-col items-center gap-1 w-16 p-2 rounded-xl hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-white/50 group-hover:text-primary transition-colors text-3xl">account_circle</span>
+<span class="text-[10px] font-medium text-white/50 group-hover:text-white transition-colors">Profile</span>
+</button>
+<button class="group flex flex-col items-center gap-1 w-16 p-2 rounded-xl bg-surface-dark border border-primary/20 shadow-[0_0_10px_rgba(0,0,0,0.2)]">
+<span class="material-symbols-outlined text-primary text-3xl">map</span>
+<span class="text-[10px] font-bold text-primary">Map</span>
+</button>
+<button class="group flex flex-col items-center gap-1 w-16 p-2 rounded-xl hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-white/50 group-hover:text-primary transition-colors text-3xl">storefront</span>
+<span class="text-[10px] font-medium text-white/50 group-hover:text-white transition-colors">Shop</span>
+</button>
+<button class="group flex flex-col items-center gap-1 w-16 p-2 rounded-xl hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-white/50 group-hover:text-primary transition-colors text-3xl">emoji_events</span>
+<span class="text-[10px] font-medium text-white/50 group-hover:text-white transition-colors">Rank</span>
+</button>
+</nav>
+</div>
+<div class="flex flex-col gap-4 items-center">
+<button class="group flex flex-col items-center gap-1 w-16 p-2 rounded-xl hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-white/50 group-hover:text-primary transition-colors text-3xl">settings</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="relative flex-1 h-full w-full overflow-hidden bg-background-dark">
+<!-- Map Background Layer (Parallax base) -->
+<div class="absolute inset-0 w-[200%] h-full bg-cover bg-center pointer-events-none opacity-40 z-0" data-alt="Dark stylized topographical map texture background" style="background-image: linear-gradient(to right, #1a1a0b, #23220f, #1a1a0b), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDJ5MQ5jEfMxWSSX4W9AwJpCv68n43Wo71q_JKMuZht2_6Wmmx6V4kiJdRDuaLzrjqllCfQK6309VLz_l3tY7yHvBH5ae7ku3LKIG9kVQ6-3Wpvbdao6kitRr5loOY0fHmUdeNPRyTYuFnqRmGR5TePNsFhiE2XPcNx9lt8Ii4BkFPhc24g5hxp2fwsJAOc9Hbo9q4tHOu7Ren4LhsCD97G9-B71HvcrE7-tmxN1Zex_TZcZj9EI4yOgGD_5Xa7rn9XaXWBA6CmKqM');">
+</div>
+<!-- Scrollable Map Container -->
+<div class="w-full h-full overflow-x-auto overflow-y-hidden no-scrollbar relative z-10 flex items-center px-24">
+<!-- SVG Path connecting nodes (Absolute to the scroll container) -->
+<!-- Note: In a real app, this would be dynamically calculated. Here it's simulated visually with CSS positions. -->
+<!-- Map Content Width Container -->
+<div class="relative min-w-[1800px] h-[80%] flex items-center my-auto">
+<!-- Connection Line (Simulated) -->
+<div class="absolute top-1/2 left-0 w-full h-2 bg-white/10 -translate-y-1/2 rounded-full"></div>
+<div class="absolute top-1/2 left-0 w-[45%] h-2 bg-primary/50 -translate-y-1/2 rounded-full blur-[2px]"></div>
+<div class="absolute top-1/2 left-0 w-[45%] h-1 bg-primary -translate-y-1/2 rounded-full shadow-[0_0_15px_#f9f506]"></div>
+<!-- Node 1: Completed -->
+<div class="absolute left-[5%] top-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center gap-3 group cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-dark border-4 border-primary flex items-center justify-center shadow-[0_0_20px_rgba(249,245,6,0.2)] hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">check</span>
+</div>
+<div class="bg-surface-darker/80 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">
+<span class="text-white/60 text-sm font-medium">Basics</span>
+</div>
+</div>
+<!-- Node 2: Completed -->
+<div class="absolute left-[25%] top-[40%] -translate-y-1/2 -translate-x-1/2 flex flex-col items-center gap-3 group cursor-pointer">
+<div class="w-20 h-20 rounded-full bg-surface-dark border-4 border-primary flex items-center justify-center shadow-[0_0_20px_rgba(249,245,6,0.2)] hover:scale-110 transition-transform duration-300">
+<span class="text-2xl font-bold text-primary">A-S</span>
+</div>
+<div class="bg-surface-darker/80 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10 flex items-center gap-1">
+<span class="text-primary text-xs material-symbols-outlined">star</span>
+<span class="text-white/80 text-sm font-medium">3 Stars</span>
+</div>
+</div>
+<!-- Node 3: Current (Active) with Popover -->
+<div class="absolute left-[45%] top-[60%] -translate-y-1/2 -translate-x-1/2 z-30">
+<div class="relative group cursor-pointer">
+<!-- Ripple Effect -->
+<div class="absolute -inset-4 bg-primary/20 rounded-full animate-ping opacity-75"></div>
+<!-- Main Node -->
+<div class="relative w-24 h-24 rounded-full bg-primary flex items-center justify-center shadow-[0_0_30px_rgba(249,245,6,0.6)] hover:scale-105 transition-transform duration-300 z-20">
+<span class="material-symbols-outlined text-background-dark text-4xl animate-pulse">keyboard</span>
+</div>
+<!-- Popover (Always visible for demo) -->
+<div class="absolute bottom-[110%] left-1/2 -translate-x-1/2 w-72 bg-surface-dark rounded-xl p-4 shadow-2xl border border-white/10 flex flex-col gap-3 z-30 animate-[bounce_3s_infinite]">
+<div class="flex items-start justify-between">
+<div>
+<h3 class="text-white text-lg font-bold leading-tight">Home Row</h3>
+<p class="text-primary text-sm font-medium">Current Lesson</p>
+</div>
+<div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center text-white text-xs font-bold">4</div>
+</div>
+<div class="w-full h-32 rounded-lg bg-cover bg-center" data-alt="Illustration of finger placement on keyboard" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBtNdXFzyQzN4b4ZFTedg1MtpQVujw1heSTnQU9ZG8QWhEGeLluKUeF6Z2TV4Q1Od5dQGpPlElTeKpCLfeV-6L1ZeNaOp3TzBVlab0OeP2z4u4TasYIIGJSv3afnI1RLlXAaFxGOe_uc3v-mM5ykmRssM6yEQF04gE9WikAJMranJNklYdO56QZRKpu_Y384toIS7XB5Qa9jUjRh-Dx8NdghGgRRr6X3EnvSLByWohJTw_e4Ej_rJZ2kaF8RhGPoMbSxaLk8LDtJJI');"></div>
+<div class="flex items-center justify-between text-xs text-white/60">
+<span>Best: 98% Acc</span>
+<span>~3 min</span>
+</div>
+<button class="w-full h-10 bg-primary hover:bg-primary-dim text-background-dark font-bold rounded-full flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+                                    Start
+                                </button>
+<!-- Triangle arrow -->
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-surface-dark rotate-45 border-r border-b border-white/10"></div>
+</div>
+</div>
+</div>
+<!-- Node 4: Locked -->
+<div class="absolute left-[65%] top-[45%] -translate-y-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-60 grayscale">
+<div class="w-16 h-16 rounded-full bg-surface-darker border-4 border-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white/30 text-2xl">lock</span>
+</div>
+<div class="bg-surface-darker/80 px-3 py-1 rounded-full backdrop-blur-sm border border-white/5">
+<span class="text-white/40 text-sm font-medium">Upper Row</span>
+</div>
+</div>
+<!-- Node 5: Locked Boss -->
+<div class="absolute left-[85%] top-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-40 grayscale">
+<div class="w-24 h-24 rounded-full bg-surface-darker border-4 border-white/10 flex items-center justify-center ring-4 ring-white/5">
+<span class="material-symbols-outlined text-white/30 text-4xl">local_fire_department</span>
+</div>
+<div class="bg-surface-darker/80 px-3 py-1 rounded-full backdrop-blur-sm border border-white/5">
+<span class="text-white/40 text-sm font-medium">Speed Test</span>
+</div>
+</div>
+</div>
+</div>
+<!-- HUD (Top Right) -->
+<div class="absolute top-6 right-8 z-40 flex gap-4">
+<!-- Stats Chip -->
+<div class="flex items-center bg-surface-dark/90 backdrop-blur-md rounded-full p-1.5 pr-6 shadow-lg border border-white/10">
+<div class="flex items-center gap-4">
+<div class="bg-primary text-background-dark px-3 py-1.5 rounded-full font-bold text-sm">
+                            Lvl 12
+                        </div>
+<div class="flex flex-col items-start leading-none">
+<span class="text-white text-sm font-bold">45 WPM</span>
+<span class="text-white/40 text-[10px] uppercase font-medium tracking-wider">Average</span>
+</div>
+<div class="w-px h-6 bg-white/10"></div>
+<div class="flex flex-col items-start leading-none">
+<span class="text-primary text-sm font-bold">🔥 3 Day</span>
+<span class="text-white/40 text-[10px] uppercase font-medium tracking-wider">Streak</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Left Floating Controls -->
+<div class="absolute bottom-6 left-6 z-40 flex gap-3">
+<div class="bg-surface-dark/90 backdrop-blur-md p-1 rounded-xl flex flex-col gap-1 shadow-lg border border-white/10">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/10 text-white">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/10 text-white">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+<button class="w-12 h-12 bg-surface-dark/90 backdrop-blur-md flex items-center justify-center rounded-full hover:bg-white/10 text-white shadow-lg border border-white/10">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+<!-- Bottom Right FAB -->
+<div class="absolute bottom-6 right-8 z-50">
+<button class="group flex items-center gap-3 h-14 pl-5 pr-6 bg-primary hover:bg-primary-dim text-background-dark rounded-full shadow-[0_4px_20px_rgba(249,245,6,0.4)] transition-all hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined text-3xl group-hover:animate-pulse">play_circle</span>
+<span class="text-lg font-bold tracking-wide">Resume Journey</span>
+</button>
+</div>
+<!-- Decorative Overlay Vignette -->
+<div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_20%,rgba(26,26,11,0.4)_100%)] z-10"></div>
+</main>
+</div>
+</body></html>

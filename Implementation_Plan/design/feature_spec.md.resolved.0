@@ -1,0 +1,69 @@
+# Feature Specification and Technical Plan
+
+## 1. Core Functionality
+
+### 1.1 Typing Engine
+*   **Input Handling**: Support for both on-screen virtual keyboard (visual aid) and external hardware keyboards (Bluetooth/Magic Keyboard).
+*   **Metrics Calculation**:
+    *   **WPM (Words Per Minute)**: `(Characters / 5) / TimeInMinutes`.
+    *   **Accuracy %**: `(TotalChars - Errors) / TotalChars * 100`.
+    *   **Consistency**: Variance in keystroke latency.
+    *   **Raw Speed**: Keystrokes per minute.
+*   **Real-time Feedback**:
+    *   Visual cursor highlights.
+    *   Haptic feedback on error (optional toggle).
+    *   Backspace behavior handling (allow vs block).
+
+### 1.2 Multi-Language & Layout Support
+*   **Languages**: English (US/UK), Spanish, French, German (Phase 1).
+*   **Layouts**: QWERTY, AZERTY, QWERTZ, Dvorak, Colemak.
+*   **Implementation**: Abstract `KeyboardLayout` protocol defining key positions and character maps.
+
+### 1.3 Progressive Lesson System
+*   **Structure**:
+    *   **Zone 1**: Home Row (F, J, D, K...)
+    *   **Zone 2**: Top Row
+    *   **Zone 3**: Bottom Row
+    *   **Zone 4**: Numbers & Symbols
+    *   **Zone 5**: Capitalization & Punctuation
+    *   **Zone 6**: Speed & Mastery
+*   **Unlock Logic**: User must achieve X% accuracy and Y WPM to unlock next lesson.
+
+### 1.4 Personalized Feedback (Smart Practice)
+*   **Mistake Analytics**: Track `(Key, ErrorCount)` and `(Bigram, ErrorCount)`.
+*   **Adaptive Drills**: Algorithmically generate words containing the user's top 3 "Problem Keys".
+
+## 2. Technical Considerations
+
+### 2.1 Recommended Tech Stack (iOS)
+*   **Language**: Swift 6.0
+*   **UI Framework**: SwiftUI (Declarative UI, ideal for animations and adaptive layouts).
+*   **Concurrency**: Swift Concurrency (`async`/`await`) for data processing.
+*   **Graphics**: `Canvas` API or `SpriteKit` for gamified visual elements (e.g., particles, racing cars).
+
+### 2.2 Data Storage
+*   **Primary**: **SwiftData** (Core Data wrapper). efficient object graph management for detailed typing history logs.
+*   **Sync**: **CloudKit**. Native, free mostly, and seamless sync between iPhone and iPad versions.
+*   **Schema**:
+    *   `UserProfile`: Settings, aggregate stats.
+    *   `TypingSession`: Date, WPM, Duration, Mode.
+    *   `LessonProgress`: LessonID, HighScore, Stars.
+    *   `KeyStat`: Char, TotalPresses, Errors.
+
+### 2.3 Offline Functionality
+*   **Requirement**: 100% Offline capable.
+*   **Sync**: Sync conflict resolution handled by CloudKit `NSPersistentCloudKitContainer` or similar strategies when connection is restored.
+
+### 2.4 Performance & Accessibility
+*   **Input Latency**: Minimized by using main actor for input events but background actors for stat calculation.
+*   **Accessibility**:
+    *   VoiceOver support for feedback.
+    *   Dynamic Type support.
+    *   High Contrast themes.
+    *   One-handed mode optimization.
+
+## 3. Onboarding Experience
+1.  **Welcome**: "What is your goal?" (Speed, Accuracy, Learn to Touch Type).
+2.  **Assessment**: 1-minute diagnostic test (skippable).
+3.  **Placement**: Auto-assign starting level based on assessment.
+4.  **Tutorial**: Interactive overlay showing "How to place fingers".

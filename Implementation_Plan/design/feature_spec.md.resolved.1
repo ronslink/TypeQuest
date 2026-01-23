@@ -1,0 +1,67 @@
+# Feature Specification and Technical Plan (iPadOS Edition)
+
+## 1. Core Functionality
+
+### 1.1 iPad-First Typing Engine
+*   **Input Handling**:
+    *   **Hardware Keyboard Priority**: Optimized for Magic Keyboard, Smart Keyboard Folio, and Bluetooth keyboards. This is the primary input method.
+    *   **On-Screen Keyboard**: "Float" and "Split" keyboard support for thumb typing practice, but UI focuses on full-size keyboard layout visualization.
+    *   **Keyboard Shortcuts**: Full support for system shortcuts (Cmd+Tab behavior functionality) and app-specific shortcuts (Cmd+R to restart, Cmd+N for next lesson).
+*   **Metrics Calculation**:
+    *   **WPM (Words Per Minute)**: `(Characters / 5) / TimeInMinutes`.
+    *   **Accuracy %**: `(TotalChars - Errors) / TotalChars * 100`.
+    *   **Consistency**: Variance in keystroke latency.
+*   **Real-time Feedback**:
+    *   Visual cursor highlights with low-latency rendering.
+    *   Peripheral vision cues (screen edges glow red on error) to keep eyes on text.
+
+### 1.2 Multi-Language & Layout Support
+*   **Languages**: English (US/UK), Spanish, French, German (Phase 1).
+*   **Layouts**: QWERTY, AZERTY, QWERTZ, Dvorak, Colemak.
+*   **Implementation**: `KeyboardLayout` protocol mapping physical hardware key codes to visual representations.
+
+### 1.3 Progressive Lesson System
+*   **Structure**:
+    *   **Zone 1**: Home Row (F, J, D, K...)
+    *   **Zone 2**: Top Row
+    *   **Zone 3**: Bottom Row
+    *   **Zone 4**: Numbers & Symbols
+    *   **Zone 5**: Capitalization & Punctuation
+    *   **Zone 6**: Speed & Mastery
+*   **Unlock Logic**: User must achieve X% accuracy and Y WPM to unlock next lesson.
+
+### 1.4 Personalized Feedback (Smart Practice)
+*   **Analysis**: Tracking individual finger efficacy (e.g., "Your right pinky is 15% slower").
+*   **Adaptive Drills**: Algorithmically generate words containing "Problem Keys".
+
+## 2. Technical Considerations
+
+### 2.1 Recommended Tech Stack (iPadOS)
+*   **Language**: Swift 6.0
+*   **UI Framework**: SwiftUI.
+    *   **Navigation**: `NavigationSplitView` (Sidebar + Detail) to utilize large screen real estate.
+    *   **Multitasking**: Full support for Split View and Slide Over.
+    *   **Stage Manager**: Window resizing and multiple window support.
+*   **Concurrency**: Swift Concurrency (`async`/`await`).
+*   **Graphics**: `Canvas` API for drawing fluid graphs; `SceneKit` or `SpriteKit` for gamified backgrounds.
+
+### 2.2 Data Storage
+*   **Primary**: **SwiftData**.
+*   **Sync**: **CloudKit**. Syncs progress between multiple iPads (e.g., school vs home).
+*   **Schema**:
+    *   `UserProfile`, `TypingSession`, `LessonProgress`, `KeyStat`.
+
+### 2.3 Offline Functionality
+*   **Requirement**: 100% Offline capable for classroom/airplane use.
+
+### 2.4 Performance & Accessibility
+*   **Accessibility**:
+    *   **Pointer Control**: Full mouse/trackpad support (Magic Keyboard trackpad).
+    *   **VoiceOver**: "Read Character" and "Read Word" feedback.
+    *   **Dynamic Type**: Massive font support.
+
+## 3. Onboarding Experience
+1.  **Welcome**: "Attach your keyboard to begin." (Detects hardware keyboard).
+2.  **Assessment**: 1-minute diagnostic test.
+3.  **Placement**: Auto-assign starting level.
+4.  **Hardware Setup**: Tutorial on how to sit and position the iPad for ergonomic typing.

@@ -1,0 +1,54 @@
+# Gamification Framework
+
+## 1. The Core Loop
+1.  **Action**: User completes a typing lesson or practice session.
+2.  **Reward**: User receives XP (Experience Points), "KeyCoins" (Soft Currency), and feedback rating (S, A, B, C).
+3.  **Progress**: XP fills the Level bar; KeyCoins accumulate for the Shop.
+4.  **Motivation**: User unlocks new content (next node on Skill Tree) or cosmetics, driving the next Action.
+
+## 2. Mechanics & Systems
+
+### 2.1 Progression Tracking
+*   **Skill Tree Map**: Instead of a linear list, use a visual map (like Candy Crush or Duolingo) where users travel through "Worlds" (e.g., Home Row Harbor, Capital City, Symbol Summit).
+*   **Player Level**: Infinite leveling system. Each level up grants a "Loot Box" (or defined reward) containing a unique theme color or avatar part.
+
+### 2.2 Streak System
+*   **Daily Streak**: Visual fire icon for consecutive days practiced.
+*   **Streak Freeze**: Consumable item purchasable with KeyCoins to protect the streak for one day.
+*   **Early Bird / Night Owl**: Bonus XP for practicing at specific times.
+
+### 2.3 Achievements (The Trophy Room)
+*   **Milestone Badges**: "Typed 10,000 words", "Reached 50 WPM", "Perfect Accuracy 10x".
+*   **Secret Achievements**: Hidden goals to encourage exploration (e.g., "Typed 100 WPM for the first time").
+
+### 2.4 Social Competition (Optional but Recommended)
+*   **Leagues**: Weekly cohorts of 30 players. Top 5 promote to next league (Bronze -> Silver -> Gold). Bottom 5 demote.
+*   **Friends List**: "Nudge" friends who haven't practiced.
+*   **Ghost Racing**: Race against a replay of a friend's best run (asynchronous multiplayer).
+
+## 3. Economy (Ethical Design)
+
+### 3.1 Currency: KeyCoins
+*   **Earned by**: Completing lessons, daily quests, maintaining streaks.
+*   **Spent on**:
+    *   **Cosmetics**: Keyboard themes (Retro, Neon, Mechanical Clicky Sounds), Backgrounds, Avatars.
+    *   **Utility**: Streak Freezes.
+*   **No Pay-to-Win**: Real money can only buy "Premium" status (subscription), not KeyCoins directly (or limit it to avoid predatory optics).
+
+### 3.2 Reward Schedule
+*   **Immediate**: Haptic tap + Sound on correct key.
+*   **Short-term**: Lesson completion screen with stars/confetti.
+*   **Medium-term**: Daily Quest completion (e.g., "Type 500 words with 98% accuracy").
+*   **Long-term**: League promotion, finishing a "World".
+
+## 4. Age-Appropriate Engagement
+
+### 4.1 Kids Mode
+*   **Visuals**: Bright, character-based avatars.
+*   **Narrative**: "Help the Space Cat fix his ship by typing the correct codes!"
+*   **Rewards**: Stickers for a digital sticker book.
+
+### 4.2 Adult/Pro Mode
+*   **Visuals**: Sleek, minimalist data visualization.
+*   **Narrative**: Mastery and self-improvement ("You are in the top 5% of typists").
+*   **Rewards**: Dark mode themes, professional sound packs (Cherry MX Blue switch sounds).
