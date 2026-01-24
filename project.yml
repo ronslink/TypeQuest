@@ -11,7 +11,9 @@ settings:
     SWIFT_VERSION: "6.0"
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
-    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGNING_REQUIRED: "NO"
     ENABLE_USER_SCRIPT_SANDBOXING: NO
 
 targets:
@@ -27,9 +29,13 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.typequest.app
         INFOPLIST_FILE: TypeQuest/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
         ENABLE_PREVIEWS: YES
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGNING_REQUIRED: "NO"
 
     preBuildScripts:
       - name: "SwiftLint"
@@ -53,6 +59,29 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.typequest.app.tests
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/TypeQuest.app/Contents/MacOS/TypeQuest"
         BUNDLE_LOADER: "$(TEST_HOST)"
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGNING_REQUIRED: "NO"
+
+  TypeQuestWidget:
+    type: app-extension
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: TypeQuestWidget
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.typequest.app.widget
+        INFOPLIST_FILE: TypeQuestWidget/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGNING_REQUIRED: "NO"
+        SKIP_INSTALL: YES
+    entitlements:
+      path: TypeQuestWidget/TypeQuestWidget.entitlements
 
 schemes:
   TypeQuest:
@@ -60,6 +89,7 @@ schemes:
       targets:
         TypeQuest: all
         TypeQuestTests: [test]
+        TypeQuestWidget: all
     run:
       config: Debug
     test:

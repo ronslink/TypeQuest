@@ -12,7 +12,7 @@ final class UserSettings {
     var theme: ThemeStyle
     var highContrastMode: Bool
     var reduceMotion: Bool
-    var keyboardLayout: KeyboardLayoutType
+    var layout: KeyboardLayout
     
     init(
         id: UUID = UUID(),
@@ -24,7 +24,7 @@ final class UserSettings {
         theme: ThemeStyle = .system,
         highContrastMode: Bool = false,
         reduceMotion: Bool = false,
-        keyboardLayout: KeyboardLayoutType = .qwerty
+        layout: KeyboardLayout = .qwerty
     ) {
         self.id = id
         self.soundEnabled = soundEnabled
@@ -35,18 +35,10 @@ final class UserSettings {
         self.theme = theme
         self.highContrastMode = highContrastMode
         self.reduceMotion = reduceMotion
-        self.keyboardLayout = keyboardLayout
+        self.layout = layout
     }
 }
 
 enum ThemeStyle: String, Codable, CaseIterable {
     case system, light, dark, vibrant, professional, highContrast, eInk
-}
-
-enum KeyboardLayoutType: String, Codable, CaseIterable {
-    case qwerty = "QWERTY"
-    case azerty = "AZERTY"
-    case qwertz = "QWERTZ"
-    case dvorak = "Dvorak"
-    case colemak = "Colemak"
 }

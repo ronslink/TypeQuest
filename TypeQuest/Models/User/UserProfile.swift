@@ -22,6 +22,10 @@ final class UserProfile {
     @Relationship(deleteRule: .cascade, inverse: \LanguageProgress.userProfile)
     var progress: [LanguageProgress]?
     
+    var layout: KeyboardLayout {
+        settings?.layout ?? .qwerty
+    }
+    
     init(
         id: UUID = UUID(),
         username: String,
