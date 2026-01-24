@@ -29,25 +29,49 @@ final class CurriculumViewModel: ObservableObject {
     }
     
     func checkForAdaptiveLesson() {
-        let weakKeys = analyticsService.identifyWeakKeys()
+        // Only trigger analysis if we have enough data (>= 5 errors on a key) to avoid premature nagging
+        let weakKeys = analyticsService.identifyWeakKeys(limit: 3, minErrors: 5)
+        
         if !weakKeys.isEmpty {
             adaptiveLesson = curriculumService.generateAdaptiveLesson(targetKeys: weakKeys)
+        } else {
+            adaptiveLesson = nil
         }
     }
     
     func isLessonUnlocked(_ lesson: Lesson) -> Bool {
-        // Logic: Lesson is unlocked if it's the first one OR the previous lesson in order is completed
-        if lesson.order == 1 && lesson.moduleId == "1.1" { // Hardcode start
+        // 1. Initial Lesson is always unlocked
+        if lesson.stageId == 1 && lesson.order == 1 && (lesson.moduleId == "1.1") {
             return true
         }
         
-        // Simplified Logic: Find previous lesson ID
-        // (In a real app, we'd lookup the graph. Here we assume sequential IDs for demo)
-        if lesson.id == "1.1.2" {
-            return completedLessons.contains("1.1.1")
+        // 2. Stage-level Gatekeeper check
+        // If lesson is in Stage N (N > 1), check if Stage N-1's Gatekeeper is completed
+        if lesson.stageId > 1 {
+            let previousStageId = lesson.stageId - 1
+            if let prevStage = stages.first(where: { $0.id == previousStageId }) {
+                // Find the gatekeeper of the previous stage
+                let gatekeeper = prevStage.modules.flatMap { $0.lessons }.first(where: { $0.isGatekeeper })
+                if let gateId = gatekeeper?.id {
+                    guard completedLessons.contains(gateId) else { return false }
+                }
+            }
         }
         
-        return false
+        // 3. Intra-stage Sequential check
+        // Find previous lesson in the hierarchy
+        // For the MVP, we assume lessons are linear across modules within a stage
+        let stageLessons = stages.first(where: { $0.id == lesson.stageId })?.modules
+            .sorted(by: { $0.order < $1.order })
+            .flatMap { $0.lessons.sorted(by: { $0.order < $1.order }) } ?? []
+            
+        if let currentIdx = stageLessons.firstIndex(where: { $0.id == lesson.id }), currentIdx > 0 {
+            let previousLesson = stageLessons[currentIdx - 1]
+            return completedLessons.contains(previousLesson.id)
+        }
+        
+        // Fallback for first lesson of a non-first stage (already passed gatekeeper check above)
+        return true
     }
     
     func markLessonComplete(_ lessonId: String) {

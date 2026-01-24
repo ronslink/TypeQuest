@@ -3,6 +3,7 @@ import Combine
 
 class NavigationManager: ObservableObject {
     @Published var selectedTab: ContentView.NavigationItem? = .practice
+    @Published var showPaywall: Bool = false
     
     // Command Actions
     let restartSessionPublisher = PassthroughSubject<Void, Never>()

@@ -10,6 +10,8 @@ public struct Lesson: Identifiable, Codable, Hashable {
     public let difficulty: LessonDifficulty
     public let contentPattern: String
     public let passingRequirements: PassingRequirements
+    public var isGatekeeper: Bool = false
+    public var contentPool: [String]? = nil
     
     public let requiredKeys: [AbstractKey]?
     
@@ -55,17 +57,22 @@ public struct Lesson: Identifiable, Codable, Hashable {
     }
 }
 
-public enum AbstractKey: String, Codable, Hashable {
+public enum AbstractKey: String, Codable, Hashable, CaseIterable {
+    // Row 1 (Home)
     case homeLeftPinky, homeLeftRing, homeLeftMiddle, homeLeftIndex
-    case homeRightIndex, homeRightMiddle, homeRightRing, homeRightPinky
+    case homeRightIndex, homeRightMiddle, homeRightRing, homeRightPinky, homeRightPinky2
+    
+    // Row 0 (Top)
     case topLeftPinky, topLeftRing, topLeftMiddle, topLeftIndex
     case topRightIndex, topRightMiddle, topRightRing, topRightPinky
+    case topRightPinky2, topRightPinky3
+    
+    // Row 2 (Bottom)
     case bottomLeftPinky, bottomLeftRing, bottomLeftMiddle, bottomLeftIndex
     case bottomRightIndex, bottomRightMiddle, bottomRightRing, bottomRightPinky
-    
-    // Extended keys
-    case topRightPinky2, topRightPinky3
     case bottomRightPinky2, bottomRightPinky3
+    
+    // Row 3 (Numbers - MVP placeholder group)
     case numLeftPinky, numLeftRing, numLeftMiddle, numLeftIndex
     case numRightIndex, numRightMiddle, numRightRing, numRightPinky
 }

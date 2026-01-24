@@ -3,14 +3,14 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject private var audioManager = AudioManager.shared
     @StateObject private var dataManager = DataManager.shared
-    
-    // We can access user via dataManager.currentUser
+    @ObservedObject private var localizer = Localizer.shared
+    @EnvironmentObject var navigationManager: NavigationManager
     
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
                 // Header
-                Text("Settings")
+                Text("settings".localized)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -18,7 +18,7 @@ struct SettingsView: View {
                     .padding(.horizontal)
                 
                 // Account Section
-                SettingsSection(title: "Account") {
+                SettingsSection(title: "account".localized) {
                     if let user = dataManager.currentUser {
                         HStack {
                             VStack(alignment: .leading) {
@@ -38,18 +38,32 @@ struct SettingsView: View {
                 }
                 
                 // Language & Region
-                SettingsSection(title: "Language & Region") {
+                SettingsSection(title: "language_region".localized) {
                     if let user = dataManager.currentUser {
-                         // Binding wrapper since user is optional
                         let langBinding = Binding<String>(
                             get: { user.primaryLanguage },
                             set: { newValue in
                                 user.primaryLanguage = newValue
-                                // Trigger save if needed
+                                localizer.currentLanguage = newValue
+                                
+                                // Auto-switch layout if needed
+                                let validLayouts = KeyboardLayout.availableLayouts(for: newValue)
+                                if !validLayouts.contains(user.settings?.layout ?? .qwerty) {
+                                    user.settings?.layout = KeyboardLayout.defaultFor(language: newValue)
+                                }
+                                
+                                NotificationCenter.default.post(name: NSNotification.Name("UserProfileLoaded"), object: nil)
                             }
                         )
                         
-                        Picker("Content Language", selection: langBinding) {
+                        let layoutBinding = Binding<KeyboardLayout>(
+                            get: { user.settings?.layout ?? .qwerty },
+                            set: { newValue in
+                                user.settings?.layout = newValue
+                            }
+                        )
+                        
+                        Picker("content_language".localized, selection: langBinding) {
                             ForEach(SupportedLanguage.allCases, id: \.self) { lang in
                                 Text(lang.displayName).tag(lang.rawValue)
                             }
@@ -57,14 +71,23 @@ struct SettingsView: View {
                         .pickerStyle(.menu)
                         .tint(.indigoPrimary)
                         
-                        Text("This affects the generated lesson content and vocabulary.")
+                        // Filtered Layout Picker
+                        Picker("keyboard_layout".localized, selection: layoutBinding) {
+                            ForEach(KeyboardLayout.availableLayouts(for: user.primaryLanguage), id: \.self) { layout in
+                                Text(layout.rawValue.uppercased()).tag(layout)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .tint(.indigoPrimary)
+                        
+                        Text("This affects the generated lesson content and keyboard visualization.")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
                 }
                 
                 // Theme Section
-                SettingsSection(title: "Appearance") {
+                SettingsSection(title: "appearance".localized) {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Theme")
                             .font(.subheadline)
@@ -73,11 +96,17 @@ struct SettingsView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 12) {
                                 ForEach(ThemeManager.AppThemePreset.allCases, id: \.self) { theme in
+                                    let isLocked = theme.isPro && !StoreManager.shared.isPro
                                     ThemePreviewCard(
                                         theme: theme,
-                                        isSelected: ThemeManager.shared.currentTheme == theme
+                                        isSelected: ThemeManager.shared.currentTheme == theme,
+                                        isLocked: isLocked
                                     ) {
-                                        ThemeManager.shared.currentTheme = theme
+                                        if isLocked {
+                                            navigationManager.showPaywall = true
+                                        } else {
+                                            ThemeManager.shared.currentTheme = theme
+                                        }
                                     }
                                 }
                             }
@@ -86,11 +115,11 @@ struct SettingsView: View {
                 }
                 
                 // Audio Section
-                SettingsSection(title: "Audio") {
-                    Toggle("Sound Effects", isOn: $audioManager.soundEnabled)
+                SettingsSection(title: "audio".localized) {
+                    Toggle("sound_effects".localized, isOn: $audioManager.soundEnabled)
                         .toggleStyle(SwitchToggleStyle(tint: .indigoPrimary))
                     
-                    Toggle("Background Music", isOn: $audioManager.musicEnabled)
+                    Toggle("background_music".localized, isOn: $audioManager.musicEnabled)
                         .toggleStyle(SwitchToggleStyle(tint: .indigoPrimary))
                     
                     if audioManager.soundEnabled {
@@ -136,17 +165,17 @@ struct SettingsView: View {
                 // Data Section
                 SettingsSection(title: "Data") {
                     Button(role: .destructive) {
-                        // Reset Logic (TODO: Wire up to DataManager reset)
-                        // For now just valid UI
+                        // Reset Logic
                     } label: {
-                        Text("Reset All Progress")
+                        Text("reset_progress".localized)
                     }
+                    .interactivePress()
                 }
                 
                 // About
                 SettingsSection(title: "About") {
                     HStack {
-                        Text("Version")
+                        Text("version".localized)
                         Spacer()
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                             .foregroundColor(.gray)
@@ -158,6 +187,10 @@ struct SettingsView: View {
         .background(Color.canvasDark)
         .onAppear {
             CloudKitManager.shared.checkAccountStatus()
+            // Sync localizer on appear
+            if let user = dataManager.currentUser {
+                localizer.currentLanguage = user.primaryLanguage
+            }
         }
     }
 }
@@ -193,6 +226,7 @@ struct SettingsSection<Content: View>: View {
 struct ThemePreviewCard: View {
     let theme: ThemeManager.AppThemePreset
     let isSelected: Bool
+    let isLocked: Bool
     let onSelect: () -> Void
     
     var body: some View {
@@ -204,16 +238,22 @@ struct ThemePreviewCard: View {
                         .fill(theme.colors.canvas)
                         .frame(width: 80, height: 60)
                     
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(theme.colors.primary)
-                            .frame(width: 16, height: 16)
-                        Circle()
-                            .fill(theme.colors.secondary)
-                            .frame(width: 16, height: 16)
-                        Circle()
-                            .fill(theme.colors.accent)
-                            .frame(width: 16, height: 16)
+                    if isLocked {
+                        Image(systemName: "lock.fill")
+                            .foregroundColor(.white.opacity(0.8))
+                            .font(.title2)
+                    } else {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(theme.colors.primary)
+                                .frame(width: 16, height: 16)
+                            Circle()
+                                .fill(theme.colors.secondary)
+                                .frame(width: 16, height: 16)
+                            Circle()
+                                .fill(theme.colors.accent)
+                                .frame(width: 16, height: 16)
+                        }
                     }
                 }
                 .overlay(

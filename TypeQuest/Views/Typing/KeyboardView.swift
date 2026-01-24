@@ -1,17 +1,13 @@
 import SwiftUI
 
 struct KeyboardView: View {
-    @ObservedObject var viewModel: TypingViewModel
+    var highlightedKeys: Set<String> = []
     @StateObject private var keyboardManager = KeyboardManager.shared
     
-    // Standard QWERTY Layout rows
-    private let rows: [[String]] = [
-        ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"],
-        ["⇥", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\"],
-        ["⇪", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "↩"],
-        ["⇧", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "⇧"],
-        ["fn", "⌃", "⌥", "⌘", " ", "⌘", "⌥", "←", "↓", "↑", "→"]
-    ]
+    private var rows: [[String]] {
+        let layout = DataManager.shared.currentUser?.layout ?? .qwerty
+        return LayoutAdapter.shared.rows(for: layout)
+    }
     
     var body: some View {
         VStack(spacing: 6) {
@@ -30,6 +26,7 @@ struct KeyboardView: View {
         .padding()
         .background(Color.surfaceDark.opacity(0.3)) // Glass effect base
         .cornerRadius(16)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: rows)
     }
     
     private func isKeyPressed(_ key: String) -> Bool {
@@ -42,14 +39,9 @@ struct KeyboardView: View {
     }
     
     private func isNextKey(_ key: String) -> Bool {
-        guard !viewModel.isComplete,
-              viewModel.currentIndex < viewModel.currentText.count else { return false }
-        
-        let targetChar = String(viewModel.currentText[viewModel.currentText.index(viewModel.currentText.startIndex, offsetBy: viewModel.currentIndex)]).lowercased()
-        
-        // Handle special keys mapping if needed
-        if targetChar == " " && key == " " { return true }
-        return key.lowercased() == targetChar
+        if highlightedKeys.contains(key.lowercased()) { return true }
+        if key == " " && highlightedKeys.contains(" ") { return true }
+        return false
     }
 }
 
@@ -71,6 +63,9 @@ struct KeyView: View {
         .frame(width: keyWidth(for: key), height: 44)
         .offset(y: isPressed ? 2 : 0)
         .animation(.spring(response: 0.1, dampingFraction: 0.6), value: isPressed)
+        .accessibilityLabel(key)
+        .accessibilityValue(isNext ? "Next character to type" : "")
+        .accessibilityAddTraits(isPressed ? [.isSelected] : [])
     }
     
     private var backgroundColor: Color {

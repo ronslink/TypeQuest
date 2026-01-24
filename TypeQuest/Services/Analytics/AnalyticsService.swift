@@ -9,7 +9,7 @@ final class AnalyticsService: ObservableObject {
     private init() {}
     
     /// Identifies the user's weakest keys based on weighted accuracy and recency
-    func identifyWeakKeys(limit: Int = 3) -> [String] {
+    func identifyWeakKeys(limit: Int = 3, minErrors: Int = 5) -> [String] {
         // Algorithm:
         // 1. Fetch recent performance data
         // 2. Weight recent sessions higher (Exponential Moving Average)
@@ -17,7 +17,7 @@ final class AnalyticsService: ObservableObject {
         
         // MVP Implementation: relying on DataManager's existing fetch
         // In a real implementation, we would query granular key logs
-        return dataManager.fetchWeakestKeys(limit: limit)
+        return dataManager.fetchWeakestKeys(limit: limit, minErrors: minErrors)
     }
     
     /// Calculates a composite struggle score (0-100) for a given key

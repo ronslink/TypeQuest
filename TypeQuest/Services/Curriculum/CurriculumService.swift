@@ -10,6 +10,15 @@ final class CurriculumService: ObservableObject {
     
     private init() {
         loadCurriculum()
+        setupUserObserver()
+    }
+    
+    private func setupUserObserver() {
+        // Observe DataManager and reload if language changes
+        // For MVP, we'll just reload manually if we detect a profile change
+        NotificationCenter.default.addObserver(forName: NSNotification.Name("UserProfileLoaded"), object: nil, queue: .main) { [weak self] _ in
+            self?.loadCurriculum()
+        }
     }
     
     func getAllStages() -> [Stage] {
@@ -36,6 +45,11 @@ final class CurriculumService: ObservableObject {
         // Since UserProfile tracks progress (LanguageProgress), we could check that.
         // For now, let's just find the first available lesson.
         
+        // Ensure curriculum matches user language
+        if stages.isEmpty || !stages.first!.modules.first!.lessons.first!.id.contains(userProfile.primaryLanguage) {
+             loadCurriculum(language: userProfile.primaryLanguage)
+        }
+
         // Iterate through all lessons in order
         for stage in stages {
             for module in stage.modules {
@@ -54,25 +68,76 @@ final class CurriculumService: ObservableObject {
     }
     
     private func isLessonCompleted(_ lesson: Lesson, user: UserProfile) -> Bool {
-        // Placeholder check
-        // Check user.progress or similar
-        return false // Always return first lesson for testing if no progress
+        // Find progress for the lesson's language (inferred or explicit)
+        // Since Lesson doesn't strictly store 'language' code but ID prefixes often have it (e.g. "es."),
+        // we should rely on the UserProfile's primary language or search all progress.
+        // Better yet, search for the lesson ID in ANY language progress.
+        
+        guard let progressList = user.progress else { return false }
+        
+        for langProgress in progressList {
+            if langProgress.completedLessons.contains(lesson.id) {
+                return true
+            }
+        }
+        
+        return false
     }
     
     func generateContent(for lesson: Lesson, layout: KeyboardLayout = .qwerty) -> String {
-        guard let keys = lesson.requiredKeys else {
+        guard let keys = lesson.requiredKeys, !keys.isEmpty else {
             // Static content fallback
             return lesson.contentPattern
         }
         
-        // Dynamic content generation
-        let leftIndex = layoutAdapter.characters(for: .homeLeftIndex, layout: layout)
-        let rightIndex = layoutAdapter.characters(for: .homeRightIndex, layout: layout)
+        // Dynamic content generation based on layout
+        // 1. Map abstract keys to user's layout characters
+        let chars = keys.compactMap { key -> String? in
+            let char = layoutAdapter.characters(for: key, layout: layout)
+            return char == "?" ? nil : char
+        }
         
-        // Simple MVP pattern generator mostly for Lesson 1
-        if keys.contains(.homeLeftIndex) && keys.contains(.homeRightIndex) {
-             // Pattern: f j f j ff jj fj
-            return "\(leftIndex) \(rightIndex) \(leftIndex) \(rightIndex) \(leftIndex)\(leftIndex) \(rightIndex)\(rightIndex) \(leftIndex)\(rightIndex)"
+        guard !chars.isEmpty else { return lesson.contentPattern }
+        
+        // 2. Generate Pattern
+        // If it's a Stage 1 or 2 drills lesson, we prefer the dynamic pattern
+        // If it's Stage 4 (Words) or 5 (Sentences), we might want to stick to the intended words
+        // UNLESS the words contain impossible keys. 
+        // For MVP, valid assumption: Stage 1 & 2 are purely mechanical.
+        
+        if lesson.stageId <= 2 {
+            // Biomechanical Drill Generation
+            // Pattern: simple repetition of available characters
+            
+            if chars.count == 2 {
+                let a = chars[0]
+                let b = chars[1]
+                // "fff jjj fff jjj fj jf fj jf"
+                return "\(a)\(a)\(a) \(b)\(b)\(b) \(a)\(a)\(a) \(b)\(b)\(b) \(a)\(b) \(b)\(a) \(a)\(b) \(b)\(a)"
+            } else if chars.count <= 4 {
+                // "asdf asdf fdsa fdsa"
+                let forward = chars.joined(separator: "")
+                let backward = String(chars.reversed().joined(separator: ""))
+                var pattern = ""
+                for _ in 0..<3 {
+                    pattern += "\(forward) \(forward) \(backward) \(backward) "
+                }
+                // Mix in doubles
+                // "aa ss dd ff"
+                for char in chars {
+                    pattern += "\(char)\(char)\(char) "
+                }
+                return pattern.trimmingCharacters(in: .whitespaces)
+            } else {
+                // Larger sets (Full row)
+                // "asdfg hjkl;"
+                let full = chars.joined(separator: "")
+                var pattern = ""
+                for _ in 0..<5 {
+                     pattern += "\(full) \(String(full.reversed())) "
+                }
+                return pattern.trimmingCharacters(in: .whitespaces)
+            }
         }
         
         return lesson.contentPattern
@@ -130,9 +195,21 @@ final class CurriculumService: ObservableObject {
         return pattern.trimmingCharacters(in: .whitespaces)
     }
     
-    private func loadCurriculum() {
-        // Use LessonCatalog for the comprehensive 100+ lesson curriculum
-        stages = LessonCatalog.shared.generateAllStages()
+    private func loadCurriculum(language: String? = nil) {
+        // Use user language or fallback to English
+        let lang = language ?? DataManager.shared.currentUser?.primaryLanguage ?? "en"
+        let fullCurriculum = LessonCatalog.shared.generateAllStages(language: lang)
+        
+        // Monetization: Gate stages 3-6 behind Pro
+        let proActive = StoreManager.shared.isPro
+        
+        self.stages = fullCurriculum.map { stage in
+            var mutableStage = stage
+            if stage.id > 2 && !proActive {
+                mutableStage.isLocked = true
+            }
+            return mutableStage
+        }
     }
 }
 
@@ -263,13 +340,16 @@ extension CurriculumService {
         // FALLBACK: If specific generation failed or returned nothing (e.g. empty word cache),
         // use the static content pattern from the lesson definition.
         if mainExercises.isEmpty && !lesson.contentPattern.isEmpty {
+            // IF it's a gatekeeper, pick from the pool for randomization
+            let content = (lesson.isGatekeeper ? (lesson.contentPool?.randomElement() ?? lesson.contentPattern) : lesson.contentPattern)
+            
             mainExercises.append(
                 Exercise(
                     type: .sentence,
-                    content: lesson.contentPattern,
-                    targetMetric: MetricTarget(metric: .wpm, threshold: 20),
+                    content: content,
+                    targetMetric: MetricTarget(metric: .accuracy, threshold: lesson.passingRequirements.minAccuracy),
                     timeLimit: nil,
-                    repetitions: 3
+                    repetitions: 1 // Test only once for high-stakes
                 )
             )
         }
@@ -306,7 +386,10 @@ extension CurriculumService {
             case .homeRightIndex, .topRightIndex, .bottomRightIndex, .numRightIndex: columns.insert(.rightIndex)
             case .homeRightMiddle, .topRightMiddle, .bottomRightMiddle, .numRightMiddle: columns.insert(.rightMiddle)
             case .homeRightRing, .topRightRing, .bottomRightRing, .numRightRing: columns.insert(.rightRing)
-            case .homeRightPinky, .topRightPinky, .bottomRightPinky, .numRightPinky, .topRightPinky2, .topRightPinky3, .bottomRightPinky2, .bottomRightPinky3: columns.insert(.rightPinky)
+            case .homeRightPinky, .topRightPinky, .bottomRightPinky, .numRightPinky, 
+                 .topRightPinky2, .topRightPinky3, .bottomRightPinky2, .bottomRightPinky3,
+                 .homeRightPinky2:
+                columns.insert(.rightPinky)
             }
         }
         

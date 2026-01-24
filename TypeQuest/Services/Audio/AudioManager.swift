@@ -65,6 +65,10 @@ final class AudioManager: ObservableObject {
         case "backspace": soundID = 1105 // Tink
         case "session_complete": soundID = 1016
         case "level_up": soundID = 1024
+        case "race_start": soundID = 1000
+        case "spell_cast": soundID = 1007
+        case "enemy_hit": soundID = 1013
+        case "player_hit": soundID = 1003
         default: return
         }
         
@@ -101,6 +105,10 @@ enum SoundType: String, CaseIterable {
     case sessionComplete = "session_complete"
     case levelUp = "level_up"
     case achievement = "achievement"
+    case raceStart = "race_start"
+    case spellCast = "spell_cast"
+    case enemyHit = "enemy_hit"
+    case playerHit = "player_hit"
 }
 
 enum MusicTrack: String, CaseIterable {

@@ -69,11 +69,19 @@ struct TypingView: View {
             }
             .frame(height: 300)
             .padding(.horizontal, 40)
+            .accessibilityLabel("Typing Area")
+            .accessibilityValue("Currently at character \(viewModel.currentIndex + 1) of \(viewModel.currentText.count). \(viewModel.errorCount) errors so far.")
+            .accessibilityAddTraits(.isStaticText)
             
-            // Keyboard Visualizer
+            // Keyboard Visualizer & Hand Overlay
             if !showIntro {
-                KeyboardView(viewModel: viewModel)
-                    .padding(.bottom, 20)
+                ZStack(alignment: .bottom) {
+                    KeyboardView(highlightedKeys: currentTargetKey)
+                        .padding(.bottom, 20)
+                    
+                    // Real-time Hand Overlay
+                    handOverlay
+                }
             }
             
             // Controls
@@ -87,6 +95,7 @@ struct TypingView: View {
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
+                    .interactivePress()
                 } else {
                     Button(action: { viewModel.resetSession() }) {
                         Label("Reset", systemImage: "arrow.counterclockwise")
@@ -96,6 +105,7 @@ struct TypingView: View {
                             .foregroundColor(.error)
                             .cornerRadius(8)
                     }
+                    .interactivePress()
                 }
             }
             .padding(.bottom, 30)
@@ -137,12 +147,7 @@ struct TypingView: View {
                 viewModel.startSession(lesson: lesson)
             }
         }
-        .onTapGesture {
-            // Ensure focus / restart if tapped
-            if !viewModel.isSessionActive || viewModel.isComplete {
-                viewModel.startSession(lesson: lesson)
-            }
-        }
+        // .onTapGesture removed to prevent conflict with overlays
         
         if showIntro, let lesson = lesson {
             LessonIntroView(
@@ -159,6 +164,15 @@ struct TypingView: View {
             if !viewModel.currentPostureIssues.isEmpty {
                 PostureAlertOverlay(issues: viewModel.currentPostureIssues)
                     .padding(.bottom, 100)
+            }
+        }
+        .overlay {
+            if viewModel.showLevelUp {
+                LevelUpOverlay(newLevel: viewModel.newLevel) {
+                    viewModel.showLevelUp = false
+                }
+                .zIndex(20)
+                .transition(.scale.combined(with: .opacity))
             }
         }
         .overlay {
@@ -218,6 +232,42 @@ struct TypingView: View {
         }
         
         return output
+    }
+    
+    // Hand Overlay Component
+    @ViewBuilder
+    private var handOverlay: some View {
+        if viewModel.isSessionActive && !viewModel.isComplete {
+            HandOverlayView(
+                activeFingers: currentRequiredFingers,
+                color: .cyan.opacity(0.8),
+                scale: 0.5
+            )
+            .offset(y: 30)
+            .allowsHitTesting(false)
+            .opacity(0.6)
+        }
+    }
+    
+    // Computed property for real-time finger guidance
+    private var currentRequiredFingers: Set<Int> {
+        guard !viewModel.isComplete, 
+              viewModel.currentIndex < viewModel.currentText.count else { return [] }
+        
+        let index = viewModel.currentText.index(viewModel.currentText.startIndex, offsetBy: viewModel.currentIndex)
+        let char = String(viewModel.currentText[index])
+        let layout = DataManager.shared.currentUser?.layout ?? .qwerty
+        
+        return HandOverlayView.fingers(for: char, layout: layout)
+    }
+    
+    private var currentTargetKey: Set<String> {
+        guard !viewModel.isComplete,
+              viewModel.currentIndex < viewModel.currentText.count else { return [] }
+        
+        let index = viewModel.currentText.index(viewModel.currentText.startIndex, offsetBy: viewModel.currentIndex)
+        let char = String(viewModel.currentText[index]).lowercased()
+        return [char]
     }
 }
 
@@ -321,6 +371,7 @@ struct LessonCompletionView: View {
                         color: .indigoPrimary,
                         isMet: result.requirements == nil || result.requirements!.minWPM <= result.wpm
                     )
+                    .staggeredEntrance(delay: 0.1)
                     
                     StatCard(
                         title: "Accuracy",
@@ -329,6 +380,7 @@ struct LessonCompletionView: View {
                         color: .success,
                         isMet: result.requirements == nil || result.requirements!.minAccuracy <= result.accuracy
                     )
+                    .staggeredEntrance(delay: 0.2)
                 }
                 .opacity(showContent ? 1 : 0)
                 .offset(y: showContent ? 0 : 20)
@@ -419,6 +471,162 @@ struct StatCard: View {
             RoundedRectangle(cornerRadius: 20)
                 .stroke(isMet ? Color.white.opacity(0.1) : Color.red.opacity(0.5), lineWidth: isMet ? 1 : 2)
         )
+    }
+}
+
+struct LevelUpOverlay: View {
+    let newLevel: Int
+    let onDismiss: () -> Void
+    
+    @State private var scale: CGFloat = 0.5
+    @State private var opacity: Double = 0.0
+    
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.8).ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 80))
+                    .foregroundStyle(.yellow)
+                    .shadow(color: .orange, radius: 20)
+                
+                Text("LEVEL UP!")
+                    .font(.largeTitle)
+                    .fontWeight(.black)
+                    .foregroundStyle(
+                        LinearGradient(colors: [.yellow, .orange], startPoint: .top, endPoint: .bottom)
+                    )
+                
+                Text("Level \(newLevel)")
+                    .font(.system(size: 60, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                
+                Button("Continue") {
+                    withAnimation {
+                         onDismiss()
+                    }
+                }
+                .padding(.top, 30)
+                .buttonStyle(.borderedProminent)
+                .tint(.indigoPrimary)
+            }
+            .scaleEffect(scale)
+            .opacity(opacity)
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                scale = 1.0
+                opacity = 1.0
+            }
+        }
+    }
+}
+
+// MARK: - Hand Overlay Visuals
+
+struct HandOverlayView: View {
+    let activeFingers: Set<Int> // 0-4 Left (Pinky->Thumb), 5-9 Right (Thumb->Pinky)
+    var color: Color = .cyan
+    var scale: CGFloat = 1.0
+    
+    var body: some View {
+        HStack(spacing: 40) {
+            // Left Hand
+            HandOverlayShape(isLeft: true, activeFingers: activeFingers, color: color)
+                .frame(width: 120, height: 160)
+            
+            // Right Hand
+            HandOverlayShape(isLeft: false, activeFingers: activeFingers, color: color)
+                .frame(width: 120, height: 160)
+        }
+        .scaleEffect(scale)
+    }
+}
+
+struct HandOverlayShape: View {
+    let isLeft: Bool
+    let activeFingers: Set<Int>
+    let color: Color
+    
+    var body: some View {
+        ZStack {
+            // Palm
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.1))
+                .frame(width: 80, height: 90)
+                .offset(y: 20)
+            
+            // Fingers
+            HStack(alignment: .bottom, spacing: 4) {
+                if isLeft {
+                    HandOverlayFinger(isActive: activeFingers.contains(0), height: 50, color: color) // Pinky
+                    HandOverlayFinger(isActive: activeFingers.contains(1), height: 70, color: color) // Ring
+                    HandOverlayFinger(isActive: activeFingers.contains(2), height: 80, color: color) // Middle
+                    HandOverlayFinger(isActive: activeFingers.contains(3), height: 70, color: color) // Index
+                    HandOverlayFinger(isActive: activeFingers.contains(4), height: 40, color: color) // Thumb
+                        .rotationEffect(.degrees(30))
+                        .offset(x: 10, y: 15)
+                } else {
+                    HandOverlayFinger(isActive: activeFingers.contains(5), height: 40, color: color) // Thumb
+                        .rotationEffect(.degrees(-30))
+                        .offset(x: -10, y: 15)
+                    HandOverlayFinger(isActive: activeFingers.contains(6), height: 70, color: color) // Index
+                    HandOverlayFinger(isActive: activeFingers.contains(7), height: 80, color: color) // Middle
+                    HandOverlayFinger(isActive: activeFingers.contains(8), height: 70, color: color) // Ring
+                    HandOverlayFinger(isActive: activeFingers.contains(9), height: 50, color: color) // Pinky
+                }
+            }
+        }
+    }
+}
+
+struct HandOverlayFinger: View {
+    let isActive: Bool
+    let height: CGFloat
+    let color: Color
+    
+    var body: some View {
+        RoundedRectangle(cornerRadius: 10)
+            .fill(isActive ? color : Color.white.opacity(0.1))
+            .frame(width: 16, height: height)
+            .shadow(color: isActive ? color.opacity(0.5) : .clear, radius: 5)
+            .scaleEffect(isActive ? 1.05 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isActive)
+    }
+}
+
+// Logic helper to map characters to fingers
+extension HandOverlayView {
+    static func fingers(for character: String, layout: KeyboardLayout) -> Set<Int> {
+        // Find abstract key for character
+        // MVP: Simple lookup through AbstractKey.allCases
+        // Optimize later if needed
+        
+        let lowerChar = character.lowercased()
+        if lowerChar == " " { return [4, 5] } // Thumbs
+        
+        for key in AbstractKey.allCases {
+            if LayoutAdapter.shared.characters(for: key, layout: layout) == lowerChar {
+                switch key {
+                // Left Hand
+                case .homeLeftPinky, .topLeftPinky, .bottomLeftPinky, .numLeftPinky: return [0]
+                case .homeLeftRing, .topLeftRing, .bottomLeftRing, .numLeftRing: return [1]
+                case .homeLeftMiddle, .topLeftMiddle, .bottomLeftMiddle, .numLeftMiddle: return [2]
+                case .homeLeftIndex, .topLeftIndex, .bottomLeftIndex, .numLeftIndex: return [3]
+                
+                // Right Hand
+                case .homeRightIndex, .topRightIndex, .bottomRightIndex, .numRightIndex: return [6]
+                case .homeRightMiddle, .topRightMiddle, .bottomRightMiddle, .numRightMiddle: return [7]
+                case .homeRightRing, .topRightRing, .bottomRightRing, .numRightRing: return [8]
+                case .homeRightPinky, .topRightPinky, .bottomRightPinky, .numRightPinky, 
+                     .topRightPinky2, .topRightPinky3, .bottomRightPinky2, .bottomRightPinky3, .homeRightPinky2:
+                    return [9]
+                }
+            }
+        }
+        
+        return []
     }
 }
 

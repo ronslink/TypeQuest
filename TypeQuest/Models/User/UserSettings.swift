@@ -13,6 +13,7 @@ final class UserSettings {
     var highContrastMode: Bool
     var reduceMotion: Bool
     var layout: KeyboardLayout
+    var hasCompletedOnboarding: Bool
     
     init(
         id: UUID = UUID(),
@@ -24,7 +25,8 @@ final class UserSettings {
         theme: ThemeStyle = .system,
         highContrastMode: Bool = false,
         reduceMotion: Bool = false,
-        layout: KeyboardLayout = .qwerty
+        layout: KeyboardLayout = .qwerty,
+        hasCompletedOnboarding: Bool = false
     ) {
         self.id = id
         self.soundEnabled = soundEnabled
@@ -36,6 +38,7 @@ final class UserSettings {
         self.highContrastMode = highContrastMode
         self.reduceMotion = reduceMotion
         self.layout = layout
+        self.hasCompletedOnboarding = hasCompletedOnboarding
     }
 }
 

@@ -12,10 +12,18 @@ final class LayoutAdapter: Sendable {
             return qwertyMapping(for: abstractKey)
         case .azerty:
             return azertyMapping(for: abstractKey)
+        case .qwertz:
+            return qwertzMapping(for: abstractKey)
         case .dvorak:
             return dvorakMapping(for: abstractKey)
         case .colemak:
             return colemakMapping(for: abstractKey)
+        case .nordic:
+            return nordicMapping(for: abstractKey)
+        case .greek:
+            return greekMapping(for: abstractKey)
+        case .hindiInScript:
+            return hindiMapping(for: abstractKey)
         }
     }
     
@@ -174,51 +182,224 @@ final class LayoutAdapter: Sendable {
         }
     }
     
-    func logicalPosition(for char: String, layout: KeyboardLayout) -> CGPoint {
-        let lowerChar = char.lowercased()
-        
-        switch layout {
-        case .qwerty:
-             let qwertyKeys = [
-                ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-                ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"],
-                ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
-            ]
-            return findInGrid(lowerChar, grid: qwertyKeys)
-            
-        case .azerty:
-             let azertyKeys = [
-                ["a", "z", "e", "r", "t", "y", "u", "i", "o", "p"],
-                ["q", "s", "d", "f", "g", "h", "j", "k", "l", "m"],
-                ["w", "x", "c", "v", "b", "n", ",", ";", ":", "!"]
-            ]
-            return findInGrid(lowerChar, grid: azertyKeys)
-            
-        case .dvorak:
-            let dvorakKeys = [
-                 ["'", ",", ".", "p", "y", "f", "g", "c", "r", "l"],
-                 ["a", "o", "e", "u", "i", "d", "h", "t", "n", "s"],
-                 [";", "q", "j", "k", "x", "b", "m", "w", "v", "z"]
-            ]
-            return findInGrid(lowerChar, grid: dvorakKeys)
-            
-        case .colemak:
-            let colemakKeys = [
-                 ["q", "w", "f", "p", "g", "j", "l", "u", "y", ";"], // Top loop simplification
-                 ["a", "r", "s", "t", "d", "h", "n", "e", "i", "o"],
-                 ["z", "x", "c", "v", "b", "k", "m", ",", ".", "/"]
-            ]
-             return findInGrid(lowerChar, grid: colemakKeys)
+    private func qwertzMapping(for key: AbstractKey) -> String {
+        switch key {
+        // SWAP Y and Z from QWERTY
+        case .topLeftRing: return "w"
+        case .topRightIndex: return "z" // Z is here in QWERTZ
+        case .bottomLeftPinky: return "y" // Y is here in QWERTZ
+        default: return qwertyMapping(for: key)
         }
     }
     
-    private func findInGrid(_ char: String, grid: [[String]]) -> CGPoint {
-        for (rIndex, row) in grid.enumerated() {
-            if let cIndex = row.firstIndex(of: char) {
-                return CGPoint(x: CGFloat(cIndex * 50), y: CGFloat(rIndex * 50))
+    private func nordicMapping(for key: AbstractKey) -> String {
+        switch key {
+        case .homeRightPinky: return "ö" // or ø
+        case .topRightPinky: return "p"
+        case .topRightPinky2: return "å"
+        case .topRightPinky3: return "ä" // or æ
+        default: return qwertyMapping(for: key)
+        }
+    }
+    
+    private func greekMapping(for key: AbstractKey) -> String {
+        switch key {
+        case .homeLeftPinky: return "α"
+        case .homeLeftRing: return "σ"
+        case .homeLeftMiddle: return "δ"
+        case .homeLeftIndex: return "φ"
+        case .homeRightIndex: return "ξ"
+        case .homeRightMiddle: return "κ"
+        case .homeRightRing: return "λ"
+        case .homeRightPinky: return "´" // Dead key often here
+        
+        case .topLeftPinky: return ";"
+        case .topLeftRing: return "ς"
+        case .topLeftMiddle: return "ε"
+        case .topLeftIndex: return "ρ"
+        case .topRightIndex: return "υ"
+        case .topRightMiddle: return "θ"
+        case .topRightRing: return "ι"
+        case .topRightPinky: return "ο"
+        case .topRightPinky2: return "π"
+        
+        case .bottomLeftPinky: return "ζ"
+        case .bottomLeftRing: return "χ"
+        case .bottomLeftMiddle: return "ψ"
+        case .bottomLeftIndex: return "ω"
+        case .bottomRightIndex: return "β"
+        case .bottomRightMiddle: return "ν"
+        case .bottomRightRing: return "μ"
+        case .bottomRightPinky: return ","
+        
+        default: return qwertyMapping(for: key)
+        }
+    }
+    
+    private func hindiMapping(for key: AbstractKey) -> String {
+        // InScript Standard
+        switch key {
+        case .homeLeftPinky: return "ो"
+        case .homeLeftRing: return "े"
+        case .homeLeftMiddle: return "ा"
+        case .homeLeftIndex: return "ि"
+        case .homeRightIndex: return "र"
+        case .homeRightMiddle: return "क"
+        case .homeRightRing: return "त"
+        case .homeRightPinky: return "च"
+        case .homeRightPinky2: return "ट"
+        
+        case .topLeftPinky: return "ौ"
+        case .topLeftRing: return "ै"
+        case .topLeftMiddle: return "ा"
+        case .topLeftIndex: return "ी"
+        case .topRightIndex: return "ब"
+        case .topRightMiddle: return "ह"
+        case .topRightRing: return "ग"
+        case .topRightPinky: return "द"
+        case .topRightPinky2: return "ज"
+        case .topRightPinky3: return "ड"
+        
+        case .bottomLeftPinky: return "ॆ"
+        case .bottomLeftRing: return "ं"
+        case .bottomLeftMiddle: return "म"
+        case .bottomLeftIndex: return "न"
+        case .bottomRightIndex: return "व"
+        case .bottomRightMiddle: return "ल"
+        case .bottomRightRing: return "स"
+        case .bottomRightPinky: return ","
+        
+        default: return qwertyMapping(for: key)
+        }
+    }
+
+    func logicalPosition(for char: String, layout: KeyboardLayout) -> CGPoint {
+        // Reverse lookup: Find abstract key for character, then get physical position
+        // This is robust because it relies on the Single Source of Truth: the Key Mapping function
+        
+        // MVP: Naive Scan of all AbstractKeys. Optimized approach would use a reverse map.
+        // Since AbstractKey is small (~50 cases), this is negligible impact.
+        
+        for key in AbstractKey.allCases {
+            if characters(for: key, layout: layout) == char {
+                return physicalPosition(for: key)
             }
         }
+        
+        // Fallback or Uppercase check
+        for key in AbstractKey.allCases {
+            if characters(for: key, layout: layout) == char.lowercased() {
+                 return physicalPosition(for: key)
+            }
+        }
+        
         return .zero
+    }
+    
+    private func physicalPosition(for key: AbstractKey) -> CGPoint {
+        // Returns logic grid coordinates (Col, Row) scaled by key size
+        let kW: CGFloat = 50
+        let kH: CGFloat = 50
+        
+        switch key {
+        // Row 0 (Top)
+        case .topLeftPinky: return CGPoint(x: 1 * kW, y: 1 * kH)
+        case .topLeftRing: return CGPoint(x: 2 * kW, y: 1 * kH)
+        case .topLeftMiddle: return CGPoint(x: 3 * kW, y: 1 * kH)
+        case .topLeftIndex: return CGPoint(x: 4 * kW, y: 1 * kH)
+        case .topRightIndex: return CGPoint(x: 5 * kW, y: 1 * kH)
+        case .topRightMiddle: return CGPoint(x: 6 * kW, y: 1 * kH)
+        case .topRightRing: return CGPoint(x: 7 * kW, y: 1 * kH)
+        case .topRightPinky: return CGPoint(x: 8 * kW, y: 1 * kH)
+        case .topRightPinky2: return CGPoint(x: 9 * kW, y: 1 * kH)
+        case .topRightPinky3: return CGPoint(x: 10 * kW, y: 1 * kH)
+            
+        // Row 1 (Home)
+        case .homeLeftPinky: return CGPoint(x: 1.2 * kW, y: 2 * kH) // Slight stagger
+        case .homeLeftRing: return CGPoint(x: 2.2 * kW, y: 2 * kH)
+        case .homeLeftMiddle: return CGPoint(x: 3.2 * kW, y: 2 * kH)
+        case .homeLeftIndex: return CGPoint(x: 4.2 * kW, y: 2 * kH)
+        case .homeRightIndex: return CGPoint(x: 5.2 * kW, y: 2 * kH)
+        case .homeRightMiddle: return CGPoint(x: 6.2 * kW, y: 2 * kH)
+        case .homeRightRing: return CGPoint(x: 7.2 * kW, y: 2 * kH)
+        case .homeRightPinky: return CGPoint(x: 8.2 * kW, y: 2 * kH)
+        case .homeRightPinky2: return CGPoint(x: 9.2 * kW, y: 2 * kH)
+            
+        // Row 2 (Bottom)
+        case .bottomLeftPinky: return CGPoint(x: 1.5 * kW, y: 3 * kH)
+        case .bottomLeftRing: return CGPoint(x: 2.5 * kW, y: 3 * kH)
+        case .bottomLeftMiddle: return CGPoint(x: 3.5 * kW, y: 3 * kH)
+        case .bottomLeftIndex: return CGPoint(x: 4.5 * kW, y: 3 * kH)
+        case .bottomRightIndex: return CGPoint(x: 5.5 * kW, y: 3 * kH)
+        case .bottomRightMiddle: return CGPoint(x: 6.5 * kW, y: 3 * kH)
+        case .bottomRightRing: return CGPoint(x: 7.5 * kW, y: 3 * kH)
+        case .bottomRightPinky: return CGPoint(x: 8.5 * kW, y: 3 * kH)
+        case .bottomRightPinky2: return CGPoint(x: 9.5 * kW, y: 3 * kH)
+        case .bottomRightPinky3: return CGPoint(x: 10.5 * kW, y: 3 * kH)
+            
+        default: return .zero
+        }
+    }
+
+    func rows(for layout: KeyboardLayout) -> [[String]] {
+        switch layout {
+        case .azerty:
+            return [
+                ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"],
+                ["⇥", "a", "z", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\"],
+                ["⇪", "q", "s", "d", "f", "g", "h", "j", "k", "l", "m", "'", "↩"],
+                ["⇧", "w", "x", "c", "v", "b", "n", ",", ";", ":", "!", "⇧"],
+                ["fn", "⌃", "⌥", "⌘", " ", "⌘", "⌥", "←", "↓", "↑", "→"]
+            ]
+        case .qwertz:
+             return [
+                ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"],
+                ["⇥", "q", "w", "e", "r", "t", "z", "u", "i", "o", "p", "ü", "+", "#"],
+                ["⇪", "a", "s", "d", "f", "g", "h", "j", "k", "l", "ö", "ä", "↩"],
+                ["⇧", "y", "x", "c", "v", "b", "n", "m", ",", ".", "-", "⇧"],
+                ["fn", "⌃", "⌥", "⌘", " ", "⌘", "⌥", "←", "↓", "↑", "→"]
+            ]
+        case .greek:
+            return [
+                ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"],
+                ["⇥", ";", "ς", "ε", "ρ", "τ", "υ", "θ", "ι", "ο", "π", "[", "]", "\\"],
+                ["⇪", "α", "σ", "δ", "φ", "γ", "η", "ξ", "κ", "λ", "´", "'", "↩"],
+                ["⇧", "ζ", "χ", "ψ", "ω", "β", "ν", "μ", ",", ".", "/", "⇧"],
+                ["fn", "⌃", "⌥", "⌘", " ", "⌘", "⌥", "←", "↓", "↑", "→"]
+            ]
+        case .hindiInScript:
+             return [
+                ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"],
+                ["⇥", "ौ", "ै", "ा", "ी", "ू", "ब", "ह", "ग", "द", "ज", "ड", "़", "\\"],
+                ["⇪", "ो", "े", "ा", "ि", "ु", "प", "र", "क", "त", "च", "ट", "↩"],
+                ["⇧", " ", "ं", "म", "न", "व", "ल", "स", ",", ".", "य", "⇧"],
+                ["fn", "⌃", "⌥", "⌘", " ", "⌘", "⌥", "←", "↓", "↑", "→"]
+            ]
+        case .nordic:
+            return [
+                ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"],
+                ["⇥", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "å", "¨", "'"],
+                ["⇪", "a", "s", "d", "f", "g", "h", "j", "k", "l", "ö", "ä", "↩"],
+                ["⇧", "z", "x", "c", "v", "b", "n", "m", ",", ".", "-", "⇧"],
+                ["fn", "⌃", "⌥", "⌘", " ", "⌘", "⌥", "←", "↓", "↑", "→"]
+            ]
+        case .dvorak:
+             return [
+                ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "[", "]", "⌫"],
+                ["⇥", "'", ",", ".", "p", "y", "f", "g", "c", "r", "l", "/", "=", "\\"],
+                ["⇪", "a", "o", "e", "u", "i", "d", "h", "t", "n", "s", "-", "↩"],
+                ["⇧", ";", "q", "j", "k", "x", "b", "m", "w", "v", "z", "⇧"],
+                ["fn", "⌃", "⌥", "⌘", " ", "⌘", "⌥", "←", "↓", "↑", "→"]
+            ]
+        default: 
+            return [
+                ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"],
+                ["⇥", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\"],
+                ["⇪", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "↩"],
+                ["⇧", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "⇧"],
+                ["fn", "⌃", "⌥", "⌘", " ", "⌘", "⌥", "←", "↓", "↑", "→"]
+            ]
+        }
     }
 }
 

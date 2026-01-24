@@ -282,8 +282,6 @@ struct EnhancedLessonNode: View {
                     .frame(width: 70, height: 70)
                     .shadow(color: nodeShadowColor, radius: isHovered ? 12 : 6, x: 0, y: 4)
                 
-                // Inner content
-                Group {
                     if isCompleted {
                         Image(systemName: "checkmark")
                             .font(.system(size: 28, weight: .bold))
@@ -292,12 +290,15 @@ struct EnhancedLessonNode: View {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 24))
                             .foregroundColor(.white.opacity(0.4))
+                    } else if lesson.isGatekeeper {
+                        Image(systemName: "shield.checkered")
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundColor(.white)
                     } else {
                         Text("\(lesson.order)")
                             .font(.system(size: 28, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                     }
-                }
             }
             .scaleEffect(isHovered ? 1.1 : 1.0)
             .animation(.spring(response: 0.3), value: isHovered)
@@ -322,6 +323,14 @@ struct EnhancedLessonNode: View {
             return AnyShapeStyle(
                 LinearGradient(
                     colors: [Color.success, Color.success.opacity(0.7)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        } else if isUnlocked && lesson.isGatekeeper {
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Color.orange, Color.yellow],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )

@@ -7,4 +7,5 @@ struct Stage: Identifiable, Codable, Hashable {
     let description: String
     let iconName: String
     let modules: [Module]
+    var isLocked: Bool = false // New: UI flag for Paywall gating
 }

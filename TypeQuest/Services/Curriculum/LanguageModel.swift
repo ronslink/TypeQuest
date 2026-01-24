@@ -5,6 +5,19 @@ enum SupportedLanguage: String, CaseIterable, Codable {
     case spanish = "es"
     case french = "fr"
     case german = "de"
+    case dutch = "nl"
+    case italian = "it"
+    case polish = "pl"
+    case czech = "cs"
+    case swedish = "sv"
+    case norwegian = "no"
+    case danish = "da"
+    case hungarian = "hu"
+    case finnish = "fi"
+    case greek = "el"
+    case hindi = "hi"
+    case malay = "ms"
+    case tagalog = "tl"
     
     var displayName: String {
         switch self {
@@ -12,6 +25,19 @@ enum SupportedLanguage: String, CaseIterable, Codable {
         case .spanish: return "Español"
         case .french: return "Français"
         case .german: return "Deutsch"
+        case .dutch: return "Nederlands"
+        case .italian: return "Italiano"
+        case .polish: return "Polski"
+        case .czech: return "Čeština"
+        case .swedish: return "Svenska"
+        case .norwegian: return "Norsk"
+        case .danish: return "Dansk"
+        case .hungarian: return "Magyar"
+        case .finnish: return "Suomi"
+        case .greek: return "Ελληνικά"
+        case .hindi: return "हिन्दी"
+        case .malay: return "Bahasa Melayu"
+        case .tagalog: return "Tagalog"
         }
     }
 }
@@ -108,7 +134,21 @@ final class LanguageModel: Sendable {
                 objects: ["Essen", "Wasser", "Haus", "Ball", "Buch"],
                 adjectives: ["gut", "groß", "klein", "glücklich", "blau"]
             )
-        ]
+        ],
+        // Basic support for remaining languages to ensure non-empty generation
+        .dutch: [.general: DomainVocabulary(subjects: ["de kat", "de hond", "ik"], verbs: ["eet", "zie"], objects: ["water", "huis"], adjectives: ["goed", "groot"])],
+        .italian: [.general: DomainVocabulary(subjects: ["il gatto", "il cane", "io"], verbs: ["mangio", "vedo"], objects: ["acqua", "casa"], adjectives: ["buono", "grande"])],
+        .polish: [.general: DomainVocabulary(subjects: ["kot", "pies", "ja"], verbs: ["jem", "widzę"], objects: ["woda", "dom"], adjectives: ["dobry", "duży"])],
+        .czech: [.general: DomainVocabulary(subjects: ["kočka", "pes", "já"], verbs: ["jím", "vidím"], objects: ["voda", "dům"], adjectives: ["dobrý", "velký"])],
+        .swedish: [.general: DomainVocabulary(subjects: ["katten", "hunden", "jag"], verbs: ["äter", "ser"], objects: ["vatten", "hus"], adjectives: ["bra", "stor"])],
+        .norwegian: [.general: DomainVocabulary(subjects: ["katten", "hunden", "jeg"], verbs: ["spiser", "ser"], objects: ["vann", "hus"], adjectives: ["god", "stor"])],
+        .danish: [.general: DomainVocabulary(subjects: ["katten", "hunden", "jeg"], verbs: ["spiser", "ser"], objects: ["vand", "hus"], adjectives: ["god", "stor"])],
+        .hungarian: [.general: DomainVocabulary(subjects: ["a macska", "a kutya", "én"], verbs: ["eszem", "látok"], objects: ["vizet", "házat"], adjectives: ["jó", "nagy"])],
+        .finnish: [.general: DomainVocabulary(subjects: ["kissa", "koira", "minä"], verbs: ["syön", "näen"], objects: ["vettä", "taloa"], adjectives: ["hyvä", "iso"])],
+        .greek: [.general: DomainVocabulary(subjects: ["η γάτα", "ο σκύλος", "εγώ"], verbs: ["τρώω", "βλέπω"], objects: ["νερό", "σπίτι"], adjectives: ["καλός", "μεγάλος"])],
+        .hindi: [.general: DomainVocabulary(subjects: ["billi", "kutta", "main"], verbs: ["khata hun", "dekhta hun"], objects: ["paani", "ghar"], adjectives: ["accha", "bada"])],
+        .malay: [.general: DomainVocabulary(subjects: ["kucing", "anjing", "saya"], verbs: ["makan", "lihat"], objects: ["air", "rumah"], adjectives: ["bagus", "besar"])],
+        .tagalog: [.general: DomainVocabulary(subjects: ["ang pusa", "ang aso", "ako"], verbs: ["kumakain", "nakikita"], objects: ["tubig", "bahay"], adjectives: ["mabuti", "malaki"])]
     ]
     
     // Fallback data

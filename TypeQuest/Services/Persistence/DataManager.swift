@@ -79,6 +79,18 @@ final class DataManager: ObservableObject {
         return (try? modelContext?.fetch(descriptor)) ?? []
     }
     
+    func fetchTodayDuration() -> TimeInterval {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+        
+        let descriptor = FetchDescriptor<SessionData>(
+            predicate: #Predicate { $0.timestamp >= startOfDay }
+        )
+        
+        let sessions = (try? modelContext?.fetch(descriptor)) ?? []
+        return sessions.reduce(0) { $0 + $1.duration }
+    }
+    
     func saveXP(_ xp: Int, level: Int) {
         guard let user = currentUser else { return }
         user.totalXP = xp
@@ -103,7 +115,7 @@ final class DataManager: ObservableObject {
         try? modelContext?.save()
     }
     
-    func fetchWeakestKeys(limit: Int = 5) -> [String] {
+    func fetchWeakestKeys(limit: Int = 5, minErrors: Int = 3) -> [String] {
         // Simplified fetch: Get all stats, aggregate in memory (SwiftData aggregation limits)
         // In a production app with massive data, we'd optimize the query or pre-calculate aggregates.
         let descriptor = FetchDescriptor<KeyPerformance>()
@@ -117,11 +129,11 @@ final class DataManager: ObservableObject {
         }
         
         // Calculate accuracy and sort
-        let sortedKeys = keyStats.map { key, stats -> (String, Double) in
+        let sortedKeys = keyStats.map { key, stats -> (String, Double, Int) in
             let accuracy = Double(stats.total - stats.errors) / Double(stats.total)
-            return (key, accuracy)
+            return (key, accuracy, stats.errors)
         }
-        .filter { $0.1 < 0.9 } // Only keys with < 90% accuracy
+        .filter { $0.1 < 0.9 && $0.2 >= minErrors } // Only keys with < 90% accuracy AND met error threshold
         .sorted { $0.1 < $1.1 } // Ascending accuracy (worst first)
         .prefix(limit)
         .map { $0.0 }
@@ -141,9 +153,12 @@ final class DataManager: ObservableObject {
         sharedDefaults?.set(user.totalXP, forKey: "totalXP")
         sharedDefaults?.set(user.currentLevel, forKey: "currentLevel")
         
-        // Calculate daily progress (mock: based on today's sessions)
-        // In production, this would count today's completed lessons vs daily goal
-        sharedDefaults?.set(0.0, forKey: "dailyGoalProgress")
+        // Calculate daily progress (Goal: 15 minutes = 900 seconds)
+        let todayDuration = fetchTodayDuration()
+        let dailyGoal: TimeInterval = 900
+        let progress = min(1.0, todayDuration / dailyGoal)
+        
+        sharedDefaults?.set(progress, forKey: "dailyGoalProgress")
         
         // Trigger widget timeline refresh
         WidgetCenter.shared.reloadAllTimelines()

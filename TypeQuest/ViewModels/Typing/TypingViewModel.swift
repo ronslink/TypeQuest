@@ -59,22 +59,29 @@ final class TypingViewModel: ObservableObject {
     private let audioManager = AudioManager.shared
     private let keyboardManager = KeyboardManager.shared
     
-    // MARK: - Sample Texts
-    
-    private let sampleTexts = [
-        "The quick brown fox jumps over the lazy dog.",
-        "Pack my box with five dozen liquor jugs.",
-        "How vexingly quick daft zebras jump!",
-        "The five boxing wizards jump quickly.",
-        "Sphinx of black quartz, judge my vow."
-    ]
-    
+
     // MARK: - Initialization
     
     init() {
         setupKeyboardHandling()
         checkForLargeTextMode()
+        
+        // Listen for User Profile/Language changes
+        NotificationCenter.default.addObserver(self, selector: #selector(handleProfileUpdate), name: NSNotification.Name("UserProfileLoaded"), object: nil)
+        
+        // Subscribe to level up events
+        levelViewModel.levelUpPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] newLevel in
+                self?.newLevel = newLevel
+                self?.showLevelUp = true
+                AudioManager.shared.playSound(.sessionComplete) // Or a specific level up sound
+            }
+            .store(in: &cancellables)
     }
+    
+    @Published var showLevelUp: Bool = false
+    @Published var newLevel: Int = 1
     
     private func checkForLargeTextMode() {
         if let user = DataManager.shared.currentUser {
@@ -100,27 +107,110 @@ final class TypingViewModel: ObservableObject {
             
             loadNextExercise()
         } else {
-             currentText = sampleTexts.randomElement() ?? sampleTexts[0]
-             exerciseQueue = []
+             // Practice Mode: detailed per-language text
+             loadPracticeText()
+             exerciseQueue = [] // Single continuous session or just one text? 
+                                // Let's treat it as a single "exercise" for now, or just setting currentText direct.
              startNewExerciseSession()
+        }
+    }
+    
+    private func loadPracticeText() {
+        let language = DataManager.shared.currentUser?.primaryLanguage ?? "en"
+        let sentences = PracticeTextProvider.shared.sentences(for: language)
+        currentText = sentences.randomElement() ?? "The quick brown fox jumps over the lazy dog."
+    }
+    
+    @objc private func handleProfileUpdate() {
+        // Refresh text if we are in practice mode (no active lesson) and not currently typing (maybe?)
+        // For now, if not in session or just finished, we can refresh.
+        // Or if the user explicitly changed language, they likely want to see it immediately.
+        if !isSessionActive && currentLesson == nil {
+            loadPracticeText()
+            // Reset typed text to match new language text
+            typedText = ""
+            currentIndex = 0
         }
     }
     
     func startRemedialSession() {
         guard let lesson = currentLesson else { return }
         
-        // Restart but with reduced load (Shorter Version)
-        // We will take the first 50% of the normal exercises or at least 1
         let user = DataManager.shared.currentUser ?? UserProfile(username: "Guest", ageGroup: .adult)
-        let fullExercises = CurriculumService.shared.generateExercisesForLesson(lesson, userProfile: user)
+        let generator = ExerciseGenerator()
         
-        // Simplified/Shorter Logic: Cut count in half
-        let shortCount = max(1, fullExercises.count / 2)
-        let remedialExercises = Array(fullExercises.prefix(shortCount))
+        // 1. Analyze Failure Mode
+        // We look at the accumulated stats from the failed attempt (before they are cleared)
+        let avgWPM = lessonWPMs.isEmpty ? 0 : lessonWPMs.reduce(0, +) / Double(lessonWPMs.count)
+        let avgAccuracy = lessonAccuracies.isEmpty ? 100 : lessonAccuracies.reduce(0, +) / Double(lessonAccuracies.count)
         
-        self.exerciseQueue = remedialExercises
+        let failedAccuracy = avgAccuracy < lesson.passingRequirements.minAccuracy
+        let failedSpeed = avgWPM < lesson.passingRequirements.minWPM
+        
+        var remedialQueue: [Exercise] = []
+        
+        // 2. Generate Targeted Remediation
+        if failedAccuracy {
+            // STRATEGY: Accuracy Focus
+            // Prepend an anchor drill for the required keys to rebuild muscle memory
+            if let keys = lesson.requiredKeys, !keys.isEmpty {
+                let drill = generator.generateAnchorExercise(
+                    targetKeys: keys,
+                    difficulty: Double(lesson.difficulty.xpMultiplier) * 0.8, // Slightly easier
+                    duration: 60,
+                    userProfile: user
+                )
+                remedialQueue.append(drill)
+            } else {
+                // Fallback for word-based lessons without specific key targets
+                // Use a slower accuracy-focused repetition of the content
+                let drill = Exercise(
+                    type: .accuracy,
+                    content: lesson.contentPattern,
+                    targetMetric: MetricTarget(metric: .accuracy, threshold: lesson.passingRequirements.minAccuracy),
+                    timeLimit: nil,
+                    repetitions: 2
+                )
+                remedialQueue.append(drill)
+            }
+            
+            // Notification / Feedback (In a real app, we'd set a 'coachMessage' property here)
+            // print("Coach: Slow down and focus on hitting the right keys.")
+            
+        } else if failedSpeed {
+            // STRATEGY: Speed Builder
+            // Use sprints or flow practice
+            // If it's a word lesson, maybe break it into chunks
+            let sprint = Exercise(
+                type: .speed,
+                content: lesson.contentPattern,
+                targetMetric: MetricTarget(metric: .wpm, threshold: lesson.passingRequirements.minWPM), // Keep target, but maybe shorter duration implicitly by content
+                timeLimit: 30, // Force a sprint
+                repetitions: 3
+            )
+            remedialQueue.append(sprint)
+             
+            // print("Coach: Trust your fingers. Don't look down. Keep the rhythm.")
+        } else {
+            // Balanced / General Failure (or just close)
+            // Retry the main content but perhaps with a "warmup" first
+            remedialQueue.append(contentsOf: CurriculumService.shared.generateExercisesForLesson(lesson, userProfile: user))
+        }
+        
+        // 3. Append Original Lesson Content (if we generated drills)
+        // If we generated specific drills (first 2 cases), we want to follow up with the actual lesson content
+        // so they can pass it this time.
+        if remedialQueue.count < 3 { // Arbitrary check to avoid massive queues if we fell through to 'Balanced'
+             let originalContent = CurriculumService.shared.generateExercisesForLesson(lesson, userProfile: user)
+             remedialQueue.append(contentsOf: originalContent)
+        }
+        
+        // 4. Reset & Load
+        self.exerciseQueue = remedialQueue
         self.currentExerciseIndex = 0
-        self.totalExercisesInLesson = remedialExercises.count
+        self.totalExercisesInLesson = remedialQueue.count
+        
+        // Clear stats for the new attempt
         self.lessonWPMs = []
         self.lessonAccuracies = []
         self.isLessonPassed = false
@@ -224,17 +314,22 @@ final class TypingViewModel: ObservableObject {
             uncorrectedErrors += 1
             totalCharacters += 1
             audioManager.playSound(.errorKey)
+            
+            #if os(iOS)
+            UIAccessibility.post(notification: .announcement, argument: "Error on \(targetChar)")
+            #endif
         }
         
         updateMetrics()
         
         // Posture Monitoring
+        let currentLayout = DataManager.shared.currentUser?.layout ?? .qwerty
         let event = KeystrokeEvent(
             key: key,
             expectedKey: targetChar,
             timestamp: now,
             reactionTime: latency,
-            position: LayoutAdapter.shared.logicalPosition(for: key, layout: .qwerty),
+            position: LayoutAdapter.shared.logicalPosition(for: key, layout: currentLayout),
             isCorrect: isCorrect
         )
         keystrokeBuffer.append(event)

@@ -8,6 +8,7 @@ struct ContentView: View {
         case practice
         case curriculum
         case shop
+        case games
         case stats
         case settings
     }
@@ -29,6 +30,11 @@ struct ContentView: View {
                     Label("Shop", systemImage: "bag")
                 }
                 .tag(NavigationItem.shop)
+                
+                NavigationLink(value: NavigationItem.games) {
+                    Label("Games", systemImage: "gamecontroller")
+                }
+                .tag(NavigationItem.games)
                 
                 NavigationLink(value: NavigationItem.stats) {
                     Label("Statistics", systemImage: "chart.bar")
@@ -55,6 +61,10 @@ struct ContentView: View {
                 }
             case .shop:
                 ShopView()
+            case .games:
+                NavigationStack {
+                    GameSelectionView()
+                }
             case .stats:
                 Text("Statistics Dashboard")
             case .settings:
@@ -64,6 +74,9 @@ struct ContentView: View {
             }
         }
         .environmentObject(navigationManager)
+        .sheet(isPresented: $navigationManager.showPaywall) {
+            PaywallView()
+        }
     }
 }
 

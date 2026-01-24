@@ -96,6 +96,13 @@ final class ThemeManager: ObservableObject {
             case .lavender: return "sparkles"
             }
         }
+        
+        var isPro: Bool {
+            switch self {
+            case .midnight: return false
+            default: return true
+            }
+        }
     }
     
     // MARK: - Theme Colors
