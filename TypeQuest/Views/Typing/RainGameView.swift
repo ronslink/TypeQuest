@@ -11,29 +11,43 @@ struct RainGameView: View {
                 // Background
                 GameBackgroundView(imageName: "rain_bg")
                 
+                // Floor
+                VStack {
+                    Spacer()
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                colors: [.blue.opacity(0.3), .blue.opacity(0.8)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(height: 50)
+                        .overlay(
+                            Rectangle()
+                                .fill(Color.white.opacity(0.2))
+                                .frame(height: 1),
+                            alignment: .top
+                        )
+                }
+                .ignoresSafeArea()
+                
                 // Falling Items
                 ForEach(viewModel.fallingItems) { item in
                     ZStack {
-                        // Scrabble Tile Design
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(red: 0.96, green: 0.90, blue: 0.76)) // Cream/Wood color
-                            .shadow(color: Color.black.opacity(0.3), radius: 2, x: 1, y: 2) // Depth shadow
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.black.opacity(0.1), lineWidth: 1)
-                            )
+                        // Raindrop Visual
+                        Image(systemName: "drop.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(LinearGradient(colors: [.cyanAccent, .blue], startPoint: .top, endPoint: .bottom))
+                            .shadow(color: .cyan.opacity(0.5), radius: 5, x: 0, y: 0)
                         
-                        Text(item.text.uppercased())
-                            .font(.system(size: 28, weight: .bold, design: .serif))
-                            .foregroundColor(.black.opacity(0.8))
-                        
-                        // Little score number (like Scrabble) - decorative
-                        Text("1") 
-                            .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.black.opacity(0.6))
-                            .offset(x: 14, y: 14)
+                        Text(item.text)
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .offset(y: 5) // Center in the bulb of the drop
                     }
-                    .frame(width: 50, height: 50)
+                    .frame(width: 45, height: 60)
                     .position(
                         x: item.xPosition * geo.size.width,
                         y: item.yPosition * geo.size.height
@@ -142,6 +156,30 @@ struct RainGameView: View {
             viewModel.stopGame()
             AudioManager.shared.stopMusic()
         }
+        .overlay(
+             // Splash Effects Overlay (Simple implementation)
+             // In a real game, ViewModel would publish "splashes" to render
+             EmptyView() 
+        )
+    }
+}
+
+// Simple Splash Particle
+struct SplashView: View {
+    @State private var scale: CGFloat = 0.5
+    @State private var opacity: Double = 1.0
+    
+    var body: some View {
+        Circle()
+            .stroke(Color.cyan, lineWidth: 2)
+            .scaleEffect(scale)
+            .opacity(opacity)
+            .onAppear {
+                withAnimation(.easeOut(duration: 0.5)) {
+                    scale = 2.0
+                    opacity = 0.0
+                }
+            }
     }
 }
 

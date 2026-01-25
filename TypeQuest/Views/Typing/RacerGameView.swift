@@ -21,7 +21,8 @@ struct RacerGameView: View {
                     
                     Spacer()
                     
-                    if let wpm = viewModel.userWPM {
+                    if viewModel.userWPM > 0 {
+                        let wpm = viewModel.userWPM
                         Text("\(Int(wpm)) WPM")
                             .font(.title2)
                             .fontWeight(.bold)
@@ -87,14 +88,25 @@ struct RacerGameView: View {
                                 .font(.system(size: 80, weight: .black))
                                 .foregroundColor(.white)
                                 .transition(.scale)
-                        } else {
-                            Button("Start Engine") {
+                            Button("Start Race") {
                                 viewModel.startRaceSequence()
                             }
                             .font(.title)
                             .fontWeight(.bold)
                             .padding()
                             .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(16)
+                            .shadow(radius: 10)
+                        } else {
+                            // Initial State Button
+                            Button("Start Engine") {
+                                viewModel.startRaceSequence()
+                            }
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .padding()
+                            .background(Color.indigo)
                             .foregroundColor(.white)
                             .cornerRadius(16)
                             .shadow(radius: 10)
@@ -194,7 +206,7 @@ struct TextDisplayView: View {
         
         // Highlight cursor/next char
         if index < attributedRequest.endIndex {
-             let nextIndex = attributedRequest.index(after: index)
+             let nextIndex = attributedRequest.index(afterCharacter: index)
              attributedRequest[index..<nextIndex].foregroundColor = .white
              attributedRequest[index..<nextIndex].underlineStyle = .single
         }

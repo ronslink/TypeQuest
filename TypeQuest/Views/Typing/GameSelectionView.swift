@@ -2,6 +2,7 @@ import SwiftUI
 
 struct GameSelectionView: View {
     @EnvironmentObject var navigationManager: NavigationManager
+    @ObservedObject var localizer = Localizer.shared
     
     enum GameType {
         case rain
@@ -12,7 +13,7 @@ struct GameSelectionView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                Text("Arcade Mode")
+                Text("arcade_mode".localized)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
@@ -22,8 +23,8 @@ struct GameSelectionView: View {
                     // RAIN MODE CARD
                     NavigationLink(destination: RainGameView()) {
                         GameCard(
-                            title: "Rain Mode",
-                            description: "Type the falling letters before they hit the ground. Don't lose your lives!",
+                            title: "rain_mode".localized,
+                            description: "rain_desc".localized,
                             icon: "cloud.rain.fill",
                             color1: .cyan,
                             color2: .blue
@@ -34,8 +35,8 @@ struct GameSelectionView: View {
                     // RACER MODE CARD
                     NavigationLink(destination: RacerGameView()) {
                         GameCard(
-                            title: "Typing Racer",
-                            description: "Competitive racing against AI bots. Speed is key!",
+                            title: "racer_mode".localized,
+                            description: "racer_desc".localized,
                             icon: "car.fill",
                             color1: .orange,
                             color2: .red
@@ -46,8 +47,8 @@ struct GameSelectionView: View {
                     // SPELL CASTER (RPG)
                     NavigationLink(destination: RPGGameView()) {
                         GameCard(
-                            title: "Spell Caster",
-                            description: "Cast spells to defeat the Syntax Bug! Type fast to survive.",
+                            title: "spell_caster".localized,
+                            description: "spell_desc".localized,
                             icon: "wand.and.stars",
                             color1: .purple,
                             color2: .indigo,
@@ -97,7 +98,7 @@ struct GameCard: View {
                         .multilineTextAlignment(.leading)
                     
                     if isLocked {
-                        Label("Locked", systemImage: "lock.fill")
+                        Label("locked".localized, systemImage: "lock.fill")
                             .font(.caption)
                             .padding(6)
                             .background(Color.black.opacity(0.3))

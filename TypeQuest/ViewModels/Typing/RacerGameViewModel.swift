@@ -28,6 +28,8 @@ class RacerGameViewModel: ObservableObject {
     @Published var userWPM: Double = 0
     @Published var userRank: Int? = nil
     
+    private var countDownTask: Task<Void, Never>?
+    
     // MARK: - Private Properties
     private var raceTimer: Timer?
     private var startTime: Date?
@@ -46,18 +48,16 @@ class RacerGameViewModel: ObservableObject {
     func startRaceSequence() {
         resetRace()
         
-        // Start Countdown
+        // Start Countdown Task
         countdown = 3
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
-            Task { @MainActor [weak self] in
-                guard let self = self else { return }
-                if self.countdown > 1 {
-                    self.countdown -= 1
-                } else {
-                    timer.invalidate()
-                    self.startRace()
-                }
+        countDownTask?.cancel()
+        countDownTask = Task { @MainActor in
+            while countdown > 0 {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                if Task.isCancelled { return }
+                countdown -= 1
             }
+            startRace()
         }
     }
     
@@ -78,6 +78,8 @@ class RacerGameViewModel: ObservableObject {
         isRaceActive = false
         raceTimer?.invalidate()
         raceTimer = nil
+        countDownTask?.cancel()
+        countDownTask = nil
         cancellables.removeAll()
     }
     

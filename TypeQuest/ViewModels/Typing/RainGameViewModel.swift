@@ -30,6 +30,8 @@ class RainGameViewModel: ObservableObject {
     // Game Configuration
     private var spawnRate: TimeInterval = 2.0 // Seconds between spawns
     private var baseSpeed: CGFloat = 0.1 // Screens per second
+    private let maxSpeed: CGFloat = 0.6 // Cap spread to remain playable
+    private let minSpawnRate: TimeInterval = 0.4 // Cap spawn rate
     
     private var possibleCharacters: String {
         let language = DataManager.shared.currentUser?.primaryLanguage ?? "en"
@@ -155,8 +157,17 @@ class RainGameViewModel: ObservableObject {
     
     private func increaseDifficulty() {
         level += 1
-        spawnRate = max(0.5, spawnRate * 0.95)
-        baseSpeed = min(0.8, baseSpeed * 1.05)
+        
+        // Increase speed (logarithmic-ish decay towards max)
+        if baseSpeed < maxSpeed {
+            baseSpeed = min(maxSpeed, baseSpeed * 1.05)
+        }
+        
+        // Decrease spawn rate
+        if spawnRate > minSpawnRate {
+            spawnRate = max(minSpawnRate, spawnRate * 0.95)
+        }
+        
         startSpawnTimer() // Restart with new rate
     }
     

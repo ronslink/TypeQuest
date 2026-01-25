@@ -120,6 +120,7 @@ class RPGGameViewModel: ObservableObject {
         battleResult = nil
         combatLog.removeAll()
         setupKeyboardHandling()
+        loadSpellWords() // Reload words based on current language
     }
     
     private var currentEnemyMaxHP: Int = 200
