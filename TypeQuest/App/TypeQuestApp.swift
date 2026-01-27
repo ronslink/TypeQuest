@@ -17,9 +17,16 @@ struct TypeQuestApp: App {
                         .environmentObject(navigationManager)
                 } else {
                     OnboardingView(isOnboardingComplete: $isOnboardingComplete)
+                        .environmentObject(dataManager)
                 }
             }
             .preferredColorScheme(.dark)
+            .onAppear {
+                // Determine if we should authenticate with Game Center
+                if let user = dataManager.currentUser, user.settings?.gameCenterEnabled == true {
+                    GameCenterManager.shared.authenticate()
+                }
+            }
         }
         .commands {
             TypeQuestCommands(navigationManager: navigationManager)

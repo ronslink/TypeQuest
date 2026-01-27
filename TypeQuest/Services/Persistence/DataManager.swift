@@ -46,8 +46,11 @@ final class DataManager: ObservableObject {
         }
     }
     
-    func createUser(username: String, ageGroup: AgeGroup, language: String) -> UserProfile {
+    func createUser(username: String, ageGroup: AgeGroup, language: String, layout: KeyboardLayout) -> UserProfile {
         let user = UserProfile(username: username, ageGroup: ageGroup, primaryLanguage: language)
+        let settings = UserSettings(layout: layout, hasCompletedOnboarding: true)
+        user.settings = settings
+        
         modelContext?.insert(user)
         try? modelContext?.save()
         currentUser = user
@@ -142,6 +145,11 @@ final class DataManager: ObservableObject {
     }
     
     var lastPracticeDate: Date? { currentUser?.lastPracticeDate }
+    
+    func saveUser() {
+        try? modelContext?.save()
+        syncToWidget()
+    }
     
     // MARK: - Widget Sync
     private func syncToWidget() {

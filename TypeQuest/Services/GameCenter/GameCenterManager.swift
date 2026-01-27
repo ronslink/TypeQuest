@@ -18,7 +18,7 @@ final class GameCenterManager: ObservableObject {
     }
     
     private init() {
-        authenticate()
+        // Authentication is now triggered manually via authenticate()
     }
     
     // MARK: - Authentication

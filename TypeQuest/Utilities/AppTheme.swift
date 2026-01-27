@@ -781,9 +781,7 @@ struct OnboardingView: View {
     }
     
     private func completeOnboarding() {
-        let profile = UserProfile(username: username, ageGroup: ageGroup, primaryLanguage: selectedLanguage)
-        profile.settings = UserSettings(layout: selectedLayout, hasCompletedOnboarding: true)
-        dataManager.currentUser = profile
+        let _ = dataManager.createUser(username: username, ageGroup: ageGroup, language: selectedLanguage, layout: selectedLayout)
         isOnboardingComplete = true
         dismiss()
     }

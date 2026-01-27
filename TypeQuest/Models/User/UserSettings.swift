@@ -14,6 +14,7 @@ final class UserSettings {
     var reduceMotion: Bool
     var layout: KeyboardLayout
     var hasCompletedOnboarding: Bool
+    var gameCenterEnabled: Bool
     
     init(
         id: UUID = UUID(),
@@ -26,7 +27,8 @@ final class UserSettings {
         highContrastMode: Bool = false,
         reduceMotion: Bool = false,
         layout: KeyboardLayout = .qwerty,
-        hasCompletedOnboarding: Bool = false
+        hasCompletedOnboarding: Bool = false,
+        gameCenterEnabled: Bool = false
     ) {
         self.id = id
         self.soundEnabled = soundEnabled
@@ -39,6 +41,7 @@ final class UserSettings {
         self.reduceMotion = reduceMotion
         self.layout = layout
         self.hasCompletedOnboarding = hasCompletedOnboarding
+        self.gameCenterEnabled = gameCenterEnabled
     }
 }
 

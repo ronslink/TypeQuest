@@ -133,6 +133,45 @@ struct SettingsView: View {
                     }
                 }
                 
+                // Game Center Section
+                SettingsSection(title: "Game Center") {
+                    if let user = dataManager.currentUser {
+                        let gcBinding = Binding<Bool>(
+                            get: { user.settings?.gameCenterEnabled ?? false },
+                            set: { newValue in
+                                user.settings?.gameCenterEnabled = newValue
+                                try? dataManager.saveUser()
+                                if newValue {
+                                    GameCenterManager.shared.authenticate()
+                                }
+                            }
+                        )
+                        
+                        Toggle("Enable Game Center", isOn: gcBinding)
+                            .toggleStyle(SwitchToggleStyle(tint: .indigoPrimary))
+                        
+                        if user.settings?.gameCenterEnabled == true {
+                             if GameCenterManager.shared.isAuthenticated {
+                                 HStack {
+                                     Image(systemName: "checkmark.circle.fill").foregroundColor(.success)
+                                     Text("Signed In as \(GameCenterManager.shared.localPlayer?.alias ?? "Player")")
+                                         .font(.caption)
+                                         .foregroundColor(.gray)
+                                 }
+                                 
+                                 Button("View Leaderboards") {
+                                     GameCenterManager.shared.showLeaderboard()
+                                 }
+                                 .font(.subheadline)
+                             } else if let error = GameCenterManager.shared.error {
+                                 Text("Error: \(error)").font(.caption).foregroundColor(.red)
+                             } else {
+                                 Text("Signing in...").font(.caption).foregroundColor(.gray)
+                             }
+                        }
+                    }
+                }
+                
                 // Cloud Sync Section
                 SettingsSection(title: "Cloud Sync") {
                     HStack {
