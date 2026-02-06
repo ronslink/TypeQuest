@@ -21,53 +21,20 @@ const MUSIC_PROMPTS = {
   flow: [
     {
       name: 'flow_level_1',
-      lyrics: `[Inst]
-Soft ambient piano chords, minimal arrangement
-[Break]
-Gentle silence, 2 seconds
-[Inst]
-Low tempo continues, 70 BPM
-[Outro]
-Slow fade, peaceful conclusion`,
-      prompt: 'Lo-fi ambient, calm, soft piano chords, gentle rainfall sounds, minimal arrangement, 70 BPM, study music, focus, no vocals, warm mix',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental lo-fi ambient, C major key, 70 BPM, soft piano chords, gentle rainfall sounds, minimal arrangement, calm study music, focus atmosphere, no vocals, warm mix, purely instrumental',
       description: 'Flow Level 1 - Basic ambient for early streak'
     },
     {
       name: 'flow_level_2',
-      lyrics: `[Intro]
-Subtle synth pad fade in
-[Verse]
-Soft bass line enters, gentle rhythm
-[Pre-Chorus]
-Beat subtly enters, 80 BPM
-[Chorus]
-Full lo-fi beat, warm synth chords
-[Break]
-Percussion drops, returns to ambient
-[Outro]
-Smooth fade out`,
-      prompt: 'Lo-fi hip hop beats, calm synth pad, gentle bass line, soft drum loop, 80 BPM, chill study music, flow state, motivating, warm vinyl texture',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental lo-fi hip hop beats, C major key, 80 BPM, calm synth pad, gentle bass line, soft drum loop, chill study music, flow state, motivating, warm vinyl texture, no vocals, purely instrumental',
       description: 'Flow Level 2 - Adds rhythm for mid streak'
     },
     {
       name: 'flow_level_3',
-      lyrics: `[Intro]
-Warm synth chords fade in
-[Verse]
-Full beat with subtle percussion
-[Pre-Chorus]
-Intensity builds, melodic elements
-[Chorus]
-Harmonic progression, 90 BPM, layered textures
-[Bridge]
-String section enters
-[Build-up]
-Dramatic pause, anticipation
-[Chorus]
-Full orchestration returns
-[Outro]
-Memorable conclusion, gradual fade`,
-      prompt: 'Lo-fi pop, warm synth chords, gentle percussion, melodic, 90 BPM, uplifting study music, flow state, motivating, rich arrangement, studio quality',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental lo-fi pop, C major key, 90 BPM, warm synth chords, gentle percussion, melodic, uplifting study music, flow state, motivating, rich arrangement, studio quality, no vocals, purely instrumental',
       description: 'Flow Level 3 - Full intensity for high streak'
     }
   ],
@@ -75,80 +42,38 @@ Memorable conclusion, gradual fade`,
   achievements: [
     {
       name: 'success_chord',
-      lyrics: `[Intro]
-Positive chord progression begins
-[Chorus]
-Major key triumph, harmonic resolve
-[Outro]
-Clean, satisfying conclusion`,
-      prompt: 'Short triumphant chord progression, major key, positive, celebratory, 2 seconds, UI success sound, clean production, bright and hopeful',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental short triumphant chord progression, D major key, positive, celebratory, 2 seconds, UI success sound, clean production, bright and hopeful, no vocals, purely instrumental',
       description: 'Session Success - Harmonic chord'
     },
     {
       name: 'level_up',
-      lyrics: `[Intro]
-Ascending notes start
-[Build-up]
-Intensity builds progressively
-[Chorus]
-Full fanfare, triumphant brass
-[Outro]
-Victorious conclusion`,
-      prompt: 'Ascending musical phrase, triumphant, level up notification, 3 seconds, game achievement, bright and energetic, orchestral feel, memorable',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental ascending musical phrase, D major key, triumphant, level up notification, 3 seconds, game achievement, bright and energetic, orchestral feel, memorable, no vocals, purely instrumental',
       description: 'Level Up - Ascending celebration'
     },
     {
       name: 'streak_milestone',
-      lyrics: `[Intro]
-Building synth texture
-[Verse]
-Intensity increases gradually
-[Chorus]
-Achievement fanfare, rewarding climax
-[Break]
-Satisfying pause
-[Outro]
-Memorable finish`,
-      prompt: 'Achievement milestone, building intensity, rewarding, 4 seconds, game notification, positive reinforcement, celebratory synth, impressive crescendo',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental achievement milestone, D major key, building intensity, rewarding, 4 seconds, game notification, positive reinforcement, celebratory synth, impressive crescendo, no vocals, purely instrumental',
       description: 'Streak Milestone - Building celebration'
     },
     {
       name: 'perfect_round',
-      lyrics: `[Intro]
-Sparkling intro
-[Chorus]
-Pure harmonious tone, crystalline
-[Outro]
-Crystal finish, pristine conclusion`,
-      prompt: 'Perfect score celebration, sparkling, pure, harmonious, 2 seconds, achievement chime, clean and satisfying, bell-like tones, pristine',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental perfect score celebration, D major key, sparkling, pure, harmonious, 2 seconds, achievement chime, clean and satisfying, bell-like tones, pristine, no vocals, purely instrumental',
       description: 'Perfect Round - Sparkling celebration'
     },
     {
       name: 'legendary_achievement',
-      lyrics: `[Intro]
-Epic orchestral hit
-[Verse]
-Full orchestration develops
-[Chorus]
-Legendary fanfare, soaring melody
-[Bridge]
-Dramatic interlude
-[Chorus]
-Grand return, peak triumph
-[Outro]
-Epic conclusion, memorable theme`,
-      prompt: 'Legendary achievement fanfare, orchestral, epic, triumphant, 5 seconds, grand victory, cinematic, impressive and memorable, full ensemble',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental legendary achievement fanfare, D major key, orchestral, epic, triumphant, 5 seconds, grand victory, cinematic, impressive and memorable, full ensemble, no vocals, purely instrumental',
       description: 'Legendary - Epic fanfare'
     },
     {
       name: 'high_score',
-      lyrics: `[Intro]
-Excited energy builds
-[Chorus]
-Celebratory melody, ascending
-[Outro]
-Triumphant high note finish`,
-      prompt: 'New high score celebration, excited, uplifting, 3 seconds, game achievement, positive energy, bright and fun, memorable hook',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental new high score celebration, D major key, excited, uplifting, 3 seconds, game achievement, positive energy, bright and fun, memorable hook, no vocals, purely instrumental',
       description: 'High Score - Excited celebration'
     }
   ],
@@ -156,52 +81,38 @@ Triumphant high note finish`,
   ui: [
     {
       name: 'menu_hover',
-      lyrics: `[Inst]
-Soft click, minimal sustain`,
-      prompt: 'Short UI hover sound, soft tick, 0.3 seconds, clean and subtle, minimal frequency, no echo, immediate decay',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental short UI hover sound, soft tick, 0.3 seconds, clean and subtle, minimal frequency, no echo, immediate decay, no vocals, purely instrumental',
       description: 'Menu Hover - Soft tick'
     },
     {
       name: 'menu_select',
-      lyrics: `[Inst]
-Confirming click sound`,
-      prompt: 'UI select sound, soft click, 0.4 seconds, positive confirmation, brief sustain, clean attack',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental UI select sound, soft click, 0.4 seconds, positive confirmation, brief sustain, clean attack, no vocals, purely instrumental',
       description: 'Menu Select - Confirming click'
     },
     {
       name: 'error_muted',
-      lyrics: `[Inst]
-Low muted tone, short duration`,
-      prompt: 'Error feedback, low frequency, muted, not harsh, 0.5 seconds, gentle correction, soft attack',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental error feedback, low frequency, muted, not harsh, 0.5 seconds, gentle correction, soft attack, no vocals, purely instrumental',
       description: 'Error - Muted low tone'
     },
     {
       name: 'countdown_tick',
-      lyrics: `[Inst]
-Sharp tick, quick decay`,
-      prompt: 'Countdown tick sound, sharp and precise, 0.2 seconds, clean attack, minimal sustain',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental countdown tick sound, sharp and precise, 0.2 seconds, clean attack, minimal sustain, no vocals, purely instrumental',
       description: 'Countdown - Sharp tick'
     },
     {
       name: 'lesson_complete',
-      lyrics: `[Intro]
-Positive fanfare begins
-[Chorus]
-Accomplished feeling, major key
-[Outro]
-Satisfying conclusion`,
-      prompt: 'Lesson complete notification, positive, accomplished feeling, 2 seconds, celebratory but not overwhelming, warm and encouraging',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental lesson complete notification, D major key, positive, accomplished feeling, 2 seconds, celebratory but not overwhelming, warm and encouraging, no vocals, purely instrumental',
       description: 'Lesson Complete - Positive fanfare'
     },
     {
       name: 'wpm_target_reached',
-      lyrics: `[Intro]
-Target achieved ping
-[Chorus]
-Encouraging chime
-[Outro]
-Gentle conclusion`,
-      prompt: 'WPM target reached notification, encouraging ping, 1.5 seconds, positive reinforcement, clear and bright',
+      lyrics: '[Inst]',
+      prompt: 'Instrumental WPM target reached notification, D major key, encouraging ping, 1.5 seconds, positive reinforcement, clear and bright, no vocals, purely instrumental',
       description: 'WPM Target - Encouraging ping'
     }
   ]
@@ -231,7 +142,7 @@ async function generateMusic(lyrics, prompt, name, outputPath) {
         'Authorization': `Bearer ${API_KEY}`,
         'Content-Length': Buffer.byteLength(postData)
       },
-      timeout: 120
+      timeout: 180000
     };
 
     const req = https.request(options, (res) => {
@@ -274,9 +185,9 @@ async function generateMusic(lyrics, prompt, name, outputPath) {
 }
 
 async function generateForCategory(category) {
-  const categoryPath = category === 'flow' ? 'Music/flow_state' 
-    : category === 'achievements' ? 'Music/achievements' 
-    : 'UI/sounds';
+  const categoryPath = category === 'flow' ? 'Music/flow_state'
+    : category === 'achievements' ? 'Music/achievements'
+      : 'UI/sounds';
   const outputDir = path.join(__dirname, 'TypeQuest', 'Resources', 'Audio', categoryPath);
 
   if (!fs.existsSync(outputDir)) {

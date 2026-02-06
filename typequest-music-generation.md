@@ -44,9 +44,9 @@ node generate-music.js ui         # UI sounds
 
 | File | Description | Tags Used |
 |------|-------------|-----------|
-| `Music/flow_state/flow_level_1.mp3` | Level 1 - Basic ambient | [Inst], [Break], [Outro] |
-| `Music/flow_state/flow_level_2.mp3` | Level 2 - Adds rhythm | [Intro], [Verse], [Pre-Chorus], [Chorus], [Break], [Outro] |
-| `Music/flow_state/flow_level_3.mp3` | Level 3 - Full intensity | [Intro], [Verse], [Pre-Chorus], [Chorus], [Bridge], [Build-up], [Outro] |
+| `flow/level_1.mp3` | Level 1 - Basic ambient | [Inst], [Break], [Outro] |
+| `flow/level_2.mp3` | Level 2 - Adds rhythm | [Intro], [Verse], [Pre-Chorus], [Chorus], [Break], [Outro] |
+| `flow/level_3.mp3` | Level 3 - Full intensity | [Intro], [Verse], [Pre-Chorus], [Chorus], [Bridge], [Build-up], [Outro] |
 
 **Music Prompts:**
 - Level 1: Lo-fi ambient, 70 BPM, soft piano, rainfall
@@ -57,30 +57,19 @@ node generate-music.js ui         # UI sounds
 
 | File | Description | Duration |
 |------|-------------|----------|
-| `Music/achievements/success_chord.mp3` | Session success | ~2s |
-| `Music/achievements/level_up.mp3` | Level up fanfare | ~3s |
-| `Music/achievements/streak_milestone.mp3` | Streak celebration | ~4s |
-| `Music/achievements/perfect_round.mp3` | Perfect score | ~2s |
-| `Music/achievements/legendary_achievement.mp3` | Legendary fanfare | ~5s |
-| `Music/achievements/high_score.mp3` | High score | ~3s |
+| `achievements/success_chord.mp3` | Session success | ~2s |
+| `achievements/level_up.mp3` | Level up fanfare | ~3s |
+| `achievements/streak_milestone.mp3` | Streak celebration | ~4s |
+| `achievements/perfect_round.mp3` | Perfect score | ~2s |
+| `achievements/high_score.mp3` | High score | ~3s |
 
 ### 3. UI Sounds
 
 | File | Description | Duration |
 |------|-------------|----------|
-| `Music/achievements/success_chord.mp3` | Session success chord | ~2s |
-| `Music/achievements/level_up.mp3` | Level up fanfare | ~3s |
-| `Music/achievements/streak_milestone.mp3` | Streak celebration | ~4s |
-| `Music/achievements/perfect_round.mp3` | Perfect score sparkle | ~2s |
-| `Music/achievements/legendary_achievement.mp3` | Legendary fanfare | ~5s |
-
-### 3. UI Sounds
-
-| File | Description | Duration |
-|------|-------------|----------|
-| `UI/navigation/menu_hover.mp3` | Soft tick | 0.3s |
-| `UI/navigation/menu_select.mp3` | Confirming click | 0.4s |
-| `UI/navigation/error_muted.mp3` | Error tone | 0.5s |
+| `ui/menu_hover.mp3` | Soft tick | 0.3s |
+| `ui/error_muted.mp3` | Error tone | 0.5s |
+| `ui/wpm_target_reached.mp3` | Target reached | 1.5s |
 
 ## Voice Announcements (TTS)
 
@@ -107,46 +96,31 @@ These need to be sourced or recorded (not generated):
 
 | File | Description |
 |------|-------------|
-| `UI/keypress/blue.mp3` | Cherry MX Blue - Clicky |
-| `UI/keypress/red.mp3` | Cherry MX Red - Linear |
-| `UI/keypress/brown.mp3` | Cherry MX Brown - Tactile |
-| `UI/keypress/retro.mp3` | IBM Model M - Mechanical |
-| `UI/feedback/correct.mp3` | Crisp key confirm |
-| `UI/feedback/error.mp3` | Muted error tone |
+| `ui/keypress/blue.mp3` | Cherry MX Blue - Clicky |
+| `ui/keypress/red.mp3` | Cherry MX Red - Linear |
+| `ui/keypress/brown.mp3` | Cherry MX Brown - Tactile |
+| `ui/keypress/retro.mp3` | IBM Model M - Mechanical |
+| `ui/feedback/correct.mp3` | Crisp key confirm |
+| `ui/feedback/error.mp3` | Muted error tone |
 
 ## Directory Structure
 
 ```
 TypeQuest/TypeQuest/Resources/Audio/
-├── Voice/
-│   ├── en/ (10 sounds)
-│   ├── es/ (10 sounds)
-│   ├── fr/ (10 sounds)
-│   └── ... (all 17 languages)
-├── Music/
-│   ├── flow_state/
-│   │   ├── flow_level_1.mp3
-│   │   ├── flow_level_2.mp3
-│   │   └── flow_level_3.mp3
-│   └── achievements/
-│       ├── success_chord.mp3
-│       ├── level_up.mp3
-│       ├── streak_milestone.mp3
-│       ├── perfect_round.mp3
-│       └── legendary_achievement.mp3
-├── UI/
-│   ├── keypress/
-│   │   ├── blue.mp3
-│   │   ├── red.mp3
-│   │   ├── brown.mp3
-│   │   └── retro.mp3
-│   ├── feedback/
-│   │   ├── correct.mp3
-│   │   └── error.mp3
-│   └── navigation/
-│       ├── hover.mp3
-│       ├── select.mp3
-│       └── error_muted.mp3
+├── flow/
+│   ├── level_1.mp3
+│   ├── level_2.mp3
+│   └── level_3.mp3
+├── achievements/
+│   ├── high_score.mp3
+│   ├── level_up.mp3
+│   ├── perfect_round.mp3
+│   ├── streak_milestone.mp3
+│   └── success_chord.mp3
+├── ui/
+│   ├── error_muted.mp3
+│   ├── menu_hover.mp3
+│   └── wpm_target_reached.mp3
 ```
 
 ## Integration
@@ -168,7 +142,7 @@ class AudioManager {
     func play(category: AudioCategory) {
         switch category {
         case .flow(let level):
-            let file = "flow_level_\(min(level, 3))"
+            let file = "level_\(min(level, 3))"
             playAudio(file)
         case .achievement(let type):
             playAudio(type)
