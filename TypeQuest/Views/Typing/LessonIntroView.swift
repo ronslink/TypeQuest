@@ -277,7 +277,8 @@ struct LessonIntroView: View {
     // MARK: - Hand Placement View
     struct HandPlacementView: View {
         let activeFingers: Set<Int>
-        let color: Color
+        let color: Color // Keep for backward compatibility or unused? actually used for non-active or fallback.
+        // Actually, the requirement is to use specific colors.
         
         var body: some View {
             HStack(spacing: 40) {
@@ -294,7 +295,7 @@ struct LessonIntroView: View {
             HStack(alignment: .bottom, spacing: 4) {
                 let fingers = isLeft ? [0, 1, 2, 3, 4] : [5, 6, 7, 8, 9]
                 ForEach(fingers, id: \.self) { finger in
-                    // Skip thumbs for now since they aren't mapped in AbstractKey usually
+                    // Skip thumbs for now or color them gray
                     if (finger == 4 || finger == 5) {
                         // Thumbs
                          Capsule()
@@ -303,13 +304,14 @@ struct LessonIntroView: View {
                             .rotationEffect(.degrees(isLeft ? 20 : -20))
                     } else {
                         // Fingers
+                        let fColor = fingerColor(for: finger)
                         VStack {
                             Capsule()
-                                .fill(activeFingers.contains(finger) ? color : Color.gray.opacity(0.2))
+                                .fill(activeFingers.contains(finger) ? fColor : Color.gray.opacity(0.2))
                                 .frame(width: 12, height: height(for: finger))
                             
                             Circle()
-                                .fill(activeFingers.contains(finger) ? color.opacity(0.5) : Color.gray.opacity(0.1))
+                                .fill(activeFingers.contains(finger) ? fColor.opacity(0.5) : Color.gray.opacity(0.1))
                                 .frame(width: 8, height: 8)
                         }
                     }
@@ -324,6 +326,20 @@ struct LessonIntroView: View {
             case 2: return 75 // Middle
             case 3: return 60 // Index
             default: return 40 // Thumb
+            }
+        }
+        
+        private func fingerColor(for finger: Int) -> Color {
+            switch finger {
+            case 0: return .pink        // Left Pinky
+            case 1: return .orange      // Left Ring
+            case 2: return .yellow      // Left Middle
+            case 3: return .green       // Left Index
+            case 6: return .cyan        // Right Index
+            case 7: return .blue        // Right Middle
+            case 8: return .purple      // Right Ring
+            case 9: return .red         // Right Pinky
+            default: return .gray
             }
         }
 

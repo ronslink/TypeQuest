@@ -4330,13 +4330,39 @@ final class LessonCatalog {
         case "z": return .bottomLeftPinky
         case "x": return .bottomLeftRing
         case "c": return .bottomLeftMiddle
-        case "b": return .bottomLeftIndex // Typo fix: V/B usually index
         case "v": return .bottomLeftIndex
+        case "b": return .bottomLeftIndex // Left index usually covers V and B in QWERTY logic? Or split? Standard touch typing B is Left Index.
         case "n": return .bottomRightIndex
         case "m": return .bottomRightIndex
         case ",": return .bottomRightMiddle
         case ".": return .bottomRightRing
         case "/": return .bottomRightPinky
+            
+        // Numbers (Standard QWERTY Mapping)
+        case "1", "!": return .homeLeftPinky // Reach up
+        case "2", "@": return .homeLeftRing
+        case "3", "#": return .homeLeftMiddle
+        case "4", "$": return .homeLeftIndex
+        case "5", "%": return .homeLeftIndex
+        case "6", "^": return .homeRightIndex
+        case "7", "&": return .homeRightIndex
+        case "8", "*": return .homeRightMiddle
+        case "9", "(": return .homeRightRing
+        case "0", ")": return .homeRightPinky
+        case "-", "_": return .homeRightPinky
+        case "=", "+": return .homeRightPinky
+            
+        // Common Symbols (Approximation for Abstract Keys)
+        case "[", "{": return .topRightPinky
+        case "]", "}": return .topRightPinky
+        case "\\", "|": return .topRightPinky
+        case "'", "\"": return .homeRightPinky
+        case ";", ":": return .homeRightPinky
+            
+        // Localized Characters (German/Nordic/etc - Map to likely key positions or default to Pinky/Ring)
+        case "ä", "ö", "ü", "ß": return .homeRightPinky // Right side symbols/letters usually pinky
+        case "å", "æ", "ø": return .homeRightPinky
+        case "ñ": return .homeRightPinky
             
         default: return nil
         }
