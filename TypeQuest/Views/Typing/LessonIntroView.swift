@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 struct LessonIntroView: View {
     let lesson: Lesson
@@ -362,29 +363,13 @@ struct LessonIntroView: View {
         }
     }
 
-    // MARK: - Keyboard Visualizer
+    // MARK: - Keyboard Visualizer (Enhanced with Hand Guide)
     private var keyboardVisualizer: some View {
-        VStack(spacing: 8) {
-            Text(introStep == .homeRow ? "rest_fingers_here".localized : "active_keys".localized)
-                .font(.caption.bold())
-                .foregroundColor(.secondary)
-                .padding(.bottom, 4)
-            
-            LessonKeyboardView(
-                activeKeys: introStep == .homeRow ? HomeRowKeys : effectiveLessonKeys,
-                isHomeRowMode: introStep == .homeRow,
-                accentColor: stageColorScheme.accentColor
-            )
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(.white.opacity(0.1), lineWidth: 1)
-                    )
-            )
-        }
+        KeyboardWithHandGuideView(
+            activeKeys: introStep == .homeRow ? HomeRowKeys : effectiveLessonKeys,
+            isHomeRowMode: introStep == .homeRow,
+            accentColor: stageColorScheme.accentColor
+        )
     }
     
     // MARK: - Action Button
@@ -580,121 +565,7 @@ struct BiomechanicalFocusView: View {
     }
 }
 
-// MARK: - Enhanced Keyboard View
-struct LessonKeyboardView: View {
-    let activeKeys: [AbstractKey]
-    var isHomeRowMode: Bool = false
-    let accentColor: Color
-    
-    private var rows: [[String]] {
-        let layout = DataManager.shared.currentUser?.layout ?? .qwerty
-        return LayoutAdapter.shared.rows(for: layout)
-    }
-    
-    var body: some View {
-        VStack(spacing: 6) {
-            ForEach(rows, id: \.self) { row in
-                HStack(spacing: 6) {
-                    ForEach(row, id: \.self) { key in
-                        EnhancedLessonKeyView(
-                            key: key,
-                            isHighlighted: isKeyHighlighted(key),
-                            fingerColor: fingerColor(for: key),
-                            accentColor: accentColor
-                        )
-                    }
-                }
-            }
-        }
-    }
-    
-    private func isKeyHighlighted(_ key: String) -> Bool {
-        let layout = DataManager.shared.currentUser?.layout ?? .qwerty
-        for abstractKey in activeKeys {
-            if LayoutAdapter.shared.characters(for: abstractKey, layout: layout).lowercased() == key.lowercased() {
-                return true
-            }
-        }
-        return false
-    }
-    
-    private func fingerColor(for key: String) -> Color {
-        let layout = DataManager.shared.currentUser?.layout ?? .qwerty
-        let k = key.lowercased()
-        
-        if isHomeRowMode && !isKeyHighlighted(key) {
-            return .gray.opacity(0.2)
-        }
-        
-        for abstractKey in AbstractKey.allCases {
-            let mapped = LayoutAdapter.shared.characters(for: abstractKey, layout: layout)
-            if mapped == k {
-                switch abstractKey {
-                case .homeLeftPinky, .topLeftPinky, .bottomLeftPinky: return .pink
-                case .homeLeftRing, .topLeftRing, .bottomLeftRing: return .orange
-                case .homeLeftMiddle, .topLeftMiddle, .bottomLeftMiddle: return .yellow
-                case .homeLeftIndex, .topLeftIndex, .bottomLeftIndex: return .green
-                case .homeRightIndex, .topRightIndex, .bottomRightIndex: return .cyan
-                case .homeRightMiddle, .topRightMiddle, .bottomRightMiddle: return .blue
-                case .homeRightRing, .topRightRing, .bottomRightRing: return .purple
-                case .homeRightPinky, .topRightPinky, .bottomRightPinky: return .red
-                default: break
-                }
-            }
-        }
-        return k == " " ? .gray : .gray.opacity(0.3)
-    }
-}
-
-// MARK: - Enhanced Key View
-struct EnhancedLessonKeyView: View {
-    let key: String
-    let isHighlighted: Bool
-    let fingerColor: Color
-    let accentColor: Color
-    @State private var isPressed = false
-    
-    var body: some View {
-        ZStack {
-            // Glow effect for highlighted keys
-            if isHighlighted {
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(fingerColor.opacity(0.3))
-                    .blur(radius: 8)
-            }
-            
-            // Main key shape
-            RoundedRectangle(cornerRadius: 6)
-                .fill(isHighlighted ?
-                      LinearGradient(colors: [fingerColor, fingerColor.opacity(0.7)], startPoint: .topLeading, endPoint: .bottomTrailing) :
-                      LinearGradient(colors: [.white.opacity(0.1), .white.opacity(0.05)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(isHighlighted ? .white.opacity(0.8) : fingerColor.opacity(0.3), lineWidth: isHighlighted ? 2 : 1)
-                )
-                .shadow(color: isHighlighted ? fingerColor.opacity(0.6) : .clear, radius: 10)
-            
-            Text(key.uppercased())
-                .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                .foregroundColor(isHighlighted ? .white : .primary.opacity(0.7))
-        }
-        .frame(width: keyWidth(for: key), height: 36)
-        .scaleEffect(isHighlighted ? 1.1 : 1.0)
-        .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: isHighlighted)
-    }
-    
-    private func keyWidth(for key: String) -> CGFloat {
-        switch key {
-        case " ": return 180
-        case "⌫", "↩", "⇪", "⇧": return 48
-        case "⇥": return 40
-        case "fn", "⌃", "⌥", "⌘": return 32
-        default: return 32
-        }
-    }
-}
-
-#Preview {
+// MARK: - Biomechanical Focus
     LessonIntroView(
         lesson: Lesson(
             id: "1",
