@@ -204,14 +204,14 @@ struct LessonIntroView: View {
         VStack(spacing: 20) {
             // Stage badge
             HStack(spacing: 12) {
-                Label("Stage \(lesson.stageId)", systemImage: "chevron.right")
+                Label("\("stage_label".localized) \(lesson.stageId)", systemImage: "chevron.right")
                     .font(.caption.bold())
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(.ultraThinMaterial)
                     .cornerRadius(20)
                 
-                Text("Lesson \(lesson.order)")
+                Text("\("lesson_label".localized) \(lesson.order)")
                     .font(.caption.bold())
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -221,13 +221,13 @@ struct LessonIntroView: View {
             
             // Title with animation
             VStack(spacing: 8) {
-                Text(introStep == .homeRow ? "First Step" : "Today's Goal")
+                Text(introStep == .homeRow ? "first_step".localized : "todays_goal".localized)
                     .font(.subheadline)
                     .textCase(.uppercase)
                     .foregroundColor(.secondary)
                     .tracking(2)
                 
-                Text(introStep == .homeRow ? "Home Row Position" : (lesson.learningGoal.isEmpty ? lesson.name : lesson.learningGoal))
+                Text(introStep == .homeRow ? "home_row_position".localized : (lesson.learningGoal.isEmpty ? lesson.name : lesson.learningGoal))
                     .font(currentAgeGroup == .senior ? .title : .title2)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
@@ -244,7 +244,7 @@ struct LessonIntroView: View {
                     .multilineTextAlignment(.center)
                     .padding(.top, 4)
             } else if introStep == .homeRow {
-                Text("Place your fingers on A-S-D-F and J-K-L-;")
+                Text("home_row_instruction".localized)
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -349,7 +349,7 @@ struct LessonIntroView: View {
     // MARK: - Keyboard Visualizer
     private var keyboardVisualizer: some View {
         VStack(spacing: 8) {
-            Text(introStep == .homeRow ? "Rest Fingers Here" : "Active Keys")
+            Text(introStep == .homeRow ? "rest_fingers_here".localized : "active_keys".localized)
                 .font(.caption.bold())
                 .foregroundColor(.secondary)
                 .padding(.bottom, 4)
@@ -384,7 +384,7 @@ struct LessonIntroView: View {
             }
         } label: {
             HStack(spacing: 12) {
-                Text(introStep == .homeRow ? "Continue" : "Begin Lesson")
+                Text(introStep == .homeRow ? "continue_btn".localized : "begin_lesson".localized)
                     .font(.headline)
                 
                 Image(systemName: introStep == .homeRow ? "arrow.right" : "play.fill")
@@ -552,7 +552,7 @@ struct BiomechanicalFocusView: View {
         HStack(spacing: 10) {
             Image(systemName: "hand.raised.fill")
                 .foregroundColor(accentColor)
-            Text("Focus: \(focus)")
+            Text("\("focus_label".localized): \(focus)")
                 .font(.subheadline.weight(.medium))
                 .foregroundColor(.secondary)
         }

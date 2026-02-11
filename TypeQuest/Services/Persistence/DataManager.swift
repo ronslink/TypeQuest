@@ -55,6 +55,8 @@ final class DataManager: ObservableObject {
         try? modelContext?.save()
         currentUser = user
         userDefaults.setUsername(username)
+        // Sync language with Localizer
+        Localizer.shared.currentLanguage = language
         return user
     }
     
@@ -64,6 +66,10 @@ final class DataManager: ObservableObject {
         do {
             let users = try modelContext?.fetch(descriptor) ?? []
             currentUser = users.first
+            // Sync language with Localizer
+            if let user = currentUser {
+                Localizer.shared.currentLanguage = user.primaryLanguage
+            }
         } catch {
             print("Failed to fetch user: \(error)")
         }

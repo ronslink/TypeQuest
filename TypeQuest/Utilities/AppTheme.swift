@@ -118,7 +118,18 @@ final class Localizer: ObservableObject {
             "locked": "Locked",
             "start_battle": "Start Battle",
             "victory": "VICTORY",
-            "defeat": "DEFEAT"
+            "defeat": "DEFEAT",
+            "first_step": "First Step",
+            "todays_goal": "Today's Goal",
+            "home_row_position": "Home Row Position",
+            "home_row_instruction": "Place your fingers on A-S-D-F and J-K-L-;",
+            "continue_btn": "Continue",
+            "begin_lesson": "Begin Lesson",
+            "stage_label": "Stage",
+            "lesson_label": "Lesson",
+            "focus_label": "Focus",
+            "active_keys": "Active Keys",
+            "rest_fingers_here": "Rest Fingers Here"
         ],
         "es": [
             "settings": "Ajustes",
@@ -142,7 +153,16 @@ final class Localizer: ObservableObject {
             "locked": "Bloqueado",
             "start_battle": "Iniciar Batalla",
             "victory": "VICTORIA",
-            "defeat": "DERROTA"
+            "defeat": "DERROTA",
+            "first_step": "Primer Paso",
+            "todays_goal": "Meta de Hoy",
+            "home_row_position": "Posición Fila Base",
+            "home_row_instruction": "Coloca los dedos en A-S-D-F y J-K-L-;",
+            "continue_btn": "Continuar",
+            "begin_lesson": "Comenzar Lección",
+            "stage_label": "Etapa",
+            "lesson_label": "Lección",
+            "focus_label": "Enfoque"
         ],
         "fr": [
             "settings": "Paramètres",
@@ -166,7 +186,16 @@ final class Localizer: ObservableObject {
             "locked": "Verrouillé",
             "start_battle": "Commencer le Combat",
             "victory": "VICTOIRE",
-            "defeat": "DÉFAITE"
+            "defeat": "DÉFAITE",
+            "first_step": "Première Étape",
+            "todays_goal": "Objectif du Jour",
+            "home_row_position": "Position Rangée de Base",
+            "home_row_instruction": "Placez vos doigts sur Q-S-D-F et J-K-L-M",
+            "continue_btn": "Continuer",
+            "begin_lesson": "Commencer la Leçon",
+            "stage_label": "Étape",
+            "lesson_label": "Leçon",
+            "focus_label": "Focus"
         ],
         "de": [
             "settings": "Einstellungen",
@@ -190,7 +219,18 @@ final class Localizer: ObservableObject {
             "locked": "Gesperrt",
             "start_battle": "Kampf Starten",
             "victory": "SIEG",
-            "defeat": "NIEDERLAGE"
+            "defeat": "NIEDERLAGE",
+            "first_step": "Erster Schritt",
+            "todays_goal": "Heutiges Ziel",
+            "home_row_position": "Grundreihen-Position",
+            "home_row_instruction": "Lege deine Finger auf A-S-D-F und J-K-L-Ö",
+            "continue_btn": "Weiter",
+            "begin_lesson": "Lektion starten",
+            "stage_label": "Stufe",
+            "lesson_label": "Lektion",
+            "focus_label": "Fokus",
+            "active_keys": "Aktive Tasten",
+            "rest_fingers_here": "Finger hier ruhen lassen"
         ],
         "nl": [
             "settings": "Instellingen",
@@ -214,7 +254,16 @@ final class Localizer: ObservableObject {
             "locked": "Vergrendeld",
             "start_battle": "Start Gevecht",
             "victory": "OVERWINNING",
-            "defeat": "VERLIES"
+            "defeat": "VERLIES",
+            "first_step": "Eerste Stap",
+            "todays_goal": "Doel van Vandaag",
+            "home_row_position": "Basisrij Positie",
+            "home_row_instruction": "Plaats je vingers op A-S-D-F en J-K-L-;",
+            "continue_btn": "Doorgaan",
+            "begin_lesson": "Les Starten",
+            "stage_label": "Niveau",
+            "lesson_label": "Les",
+            "focus_label": "Focus"
         ],
         "it": [
             "settings": "Impostazioni",
@@ -238,7 +287,16 @@ final class Localizer: ObservableObject {
             "locked": "Bloccato",
             "start_battle": "Inizia Battaglia",
             "victory": "VITTORIA",
-            "defeat": "SCONFITTA"
+            "defeat": "SCONFITTA",
+            "first_step": "Primo Passo",
+            "todays_goal": "Obiettivo di Oggi",
+            "home_row_position": "Posizione Riga Base",
+            "home_row_instruction": "Posiziona le dita su A-S-D-F e J-K-L-;",
+            "continue_btn": "Continua",
+            "begin_lesson": "Inizia Lezione",
+            "stage_label": "Livello",
+            "lesson_label": "Lezione",
+            "focus_label": "Focus"
         ],
         "pl": [
             "settings": "Ustawienia",
@@ -262,7 +320,16 @@ final class Localizer: ObservableObject {
             "locked": "Zablokowane",
             "start_battle": "Rozpocznij Walkę",
             "victory": "ZWYCIĘSTWO",
-            "defeat": "PORAŻKA"
+            "defeat": "PORAŻKA",
+            "first_step": "Pierwszy Krok",
+            "todays_goal": "Cel na Dziś",
+            "home_row_position": "Pozycja Rzędu Bazowego",
+            "home_row_instruction": "Połóż palce na A-S-D-F i J-K-L-;",
+            "continue_btn": "Dalej",
+            "begin_lesson": "Rozpocznij Lekcję",
+            "stage_label": "Etap",
+            "lesson_label": "Lekcja",
+            "focus_label": "Fokus"
         ],
         "cs": [
             "settings": "Nastavení",
@@ -286,7 +353,16 @@ final class Localizer: ObservableObject {
             "locked": "Zamčeno",
             "start_battle": "Začít Bitvu",
             "victory": "VÍTĚZSTVÍ",
-            "defeat": "PROHRA"
+            "defeat": "PROHRA",
+            "first_step": "První Krok",
+            "todays_goal": "Dnešní Cíl",
+            "home_row_position": "Pozice Základní Řady",
+            "home_row_instruction": "Polož prsty na A-S-D-F a J-K-L-;",
+            "continue_btn": "Pokračovat",
+            "begin_lesson": "Začít Lekci",
+            "stage_label": "Úroveň",
+            "lesson_label": "Lekce",
+            "focus_label": "Zaměření"
         ],
         "sv": [
             "settings": "Inställningar",
@@ -310,7 +386,16 @@ final class Localizer: ObservableObject {
             "locked": "Låst",
             "start_battle": "Starta Strid",
             "victory": "SEGER",
-            "defeat": "FÖRLUST"
+            "defeat": "FÖRLUST",
+            "first_step": "Första Steget",
+            "todays_goal": "Dagens Mål",
+            "home_row_position": "Hemradsposition",
+            "home_row_instruction": "Placera fingrarna på A-S-D-F och J-K-L-Ö",
+            "continue_btn": "Fortsätt",
+            "begin_lesson": "Börja Lektion",
+            "stage_label": "Nivå",
+            "lesson_label": "Lektion",
+            "focus_label": "Fokus"
         ],
         "no": [
             "settings": "Innstillinger",
@@ -334,7 +419,16 @@ final class Localizer: ObservableObject {
             "locked": "Låst",
             "start_battle": "Start Kamp",
             "victory": "SEIER",
-            "defeat": "TAP"
+            "defeat": "TAP",
+            "first_step": "Første Steg",
+            "todays_goal": "Dagens Mål",
+            "home_row_position": "Hjemradsposisjon",
+            "home_row_instruction": "Plasser fingrene på A-S-D-F og J-K-L-Ø",
+            "continue_btn": "Fortsett",
+            "begin_lesson": "Start Leksjon",
+            "stage_label": "Nivå",
+            "lesson_label": "Leksjon",
+            "focus_label": "Fokus"
         ],
         "da": [
             "settings": "Indstillinger",
@@ -358,7 +452,16 @@ final class Localizer: ObservableObject {
             "locked": "Låst",
             "start_battle": "Start Kamp",
             "victory": "SEJR",
-            "defeat": "NEDERLAG"
+            "defeat": "NEDERLAG",
+            "first_step": "Første Skridt",
+            "todays_goal": "Dagens Mål",
+            "home_row_position": "Hjemrækkeposition",
+            "home_row_instruction": "Placer fingrene på A-S-D-F og J-K-L-Æ",
+            "continue_btn": "Fortsæt",
+            "begin_lesson": "Begynd Lektion",
+            "stage_label": "Niveau",
+            "lesson_label": "Lektion",
+            "focus_label": "Fokus"
         ],
         "hu": [
             "settings": "Beállítások",
@@ -382,7 +485,16 @@ final class Localizer: ObservableObject {
             "locked": "Zárolva",
             "start_battle": "Csata Indítása",
             "victory": "GYŐZELEM",
-            "defeat": "VERESÉGE"
+            "defeat": "VERESÉGE",
+            "first_step": "Első Lépés",
+            "todays_goal": "Mai Cél",
+            "home_row_position": "Alapsor Pozíció",
+            "home_row_instruction": "Tedd az ujjaidat az A-S-D-F és J-K-L-É billentyűkre",
+            "continue_btn": "Tovább",
+            "begin_lesson": "Lecke Indítása",
+            "stage_label": "Szint",
+            "lesson_label": "Lecke",
+            "focus_label": "Fókusz"
         ],
         "fi": [
             "settings": "Asetukset",
@@ -406,7 +518,16 @@ final class Localizer: ObservableObject {
             "locked": "Lukittu",
             "start_battle": "Aloita Taistelu",
             "victory": "VOITTO",
-            "defeat": "HÄVIÖ"
+            "defeat": "HÄVIÖ",
+            "first_step": "Ensimmäinen Askel",
+            "todays_goal": "Tämän Päivän Tavoite",
+            "home_row_position": "Perusrivin Asento",
+            "home_row_instruction": "Aseta sormet A-S-D-F ja J-K-L-Ö näppäimille",
+            "continue_btn": "Jatka",
+            "begin_lesson": "Aloita Oppitunti",
+            "stage_label": "Taso",
+            "lesson_label": "Oppitunti",
+            "focus_label": "Huomio"
         ],
         "el": [
             "settings": "Ρυθμίσεις",
@@ -430,7 +551,16 @@ final class Localizer: ObservableObject {
             "locked": "Κλειδωμένο",
             "start_battle": "Έναρξη Μάχης",
             "victory": "ΝΙΚΗ",
-            "defeat": "ΗΤΤΑ"
+            "defeat": "ΗΤΤΑ",
+            "first_step": "Πρώτο Βήμα",
+            "todays_goal": "Σημερινός Στόχος",
+            "home_row_position": "Θέση Βασικής Σειράς",
+            "home_row_instruction": "Τοποθέτησε τα δάχτυλα στα Α-Σ-Δ-Φ και Η-Ξ-Κ-Λ",
+            "continue_btn": "Συνέχεια",
+            "begin_lesson": "Ξεκίνα Μάθημα",
+            "stage_label": "Επίπεδο",
+            "lesson_label": "Μάθημα",
+            "focus_label": "Εστίαση"
         ],
         "hi": [
             "settings": "सेटिंग्स",
@@ -454,7 +584,16 @@ final class Localizer: ObservableObject {
             "locked": "बंद है",
             "start_battle": "लड़ाई शुरू करें",
             "victory": "जीत",
-            "defeat": "हार"
+            "defeat": "हार",
+            "first_step": "पहला कदम",
+            "todays_goal": "आज का लक्ष्य",
+            "home_row_position": "होम रो स्थिति",
+            "home_row_instruction": "A-S-D-F और J-K-L-; पर उंगलियाँ रखें",
+            "continue_btn": "जारी रखें",
+            "begin_lesson": "पाठ शुरू करें",
+            "stage_label": "चरण",
+            "lesson_label": "पाठ",
+            "focus_label": "फोकस"
         ],
         "ms": [
             "settings": "Tetapan",
@@ -478,7 +617,16 @@ final class Localizer: ObservableObject {
             "locked": "Terkunci",
             "start_battle": "Mula Pertarungan",
             "victory": "KEMENANGAN",
-            "defeat": "KEKALAHAN"
+            "defeat": "KEKALAHAN",
+            "first_step": "Langkah Pertama",
+            "todays_goal": "Matlamat Hari Ini",
+            "home_row_position": "Kedudukan Baris Asas",
+            "home_row_instruction": "Letakkan jari pada A-S-D-F dan J-K-L-;",
+            "continue_btn": "Teruskan",
+            "begin_lesson": "Mula Pelajaran",
+            "stage_label": "Tahap",
+            "lesson_label": "Pelajaran",
+            "focus_label": "Fokus"
         ],
         "tl": [
             "settings": "Mga Setting",
@@ -502,7 +650,16 @@ final class Localizer: ObservableObject {
             "locked": "Naka-lock",
             "start_battle": "Simulan ang Laban",
             "victory": "TAGUMPAY",
-            "defeat": "TALO"
+            "defeat": "TALO",
+            "first_step": "Unang Hakbang",
+            "todays_goal": "Layunin Ngayon",
+            "home_row_position": "Posisyon ng Home Row",
+            "home_row_instruction": "Ilagay ang mga daliri sa A-S-D-F at J-K-L-;",
+            "continue_btn": "Magpatuloy",
+            "begin_lesson": "Simulan ang Aralin",
+            "stage_label": "Antas",
+            "lesson_label": "Aralin",
+            "focus_label": "Pokus"
         ]
     ]
     
