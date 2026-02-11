@@ -222,7 +222,8 @@ struct LessonIntroView: View {
             // Title with animation
             VStack(spacing: 8) {
                 Text(introStep == .homeRow ? "First Step" : "Today's Goal")
-                    .font(.subheadline.uppercase())
+                    .font(.subheadline)
+                    .textCase(.uppercase)
                     .foregroundColor(.secondary)
                     .tracking(2)
                 
@@ -262,7 +263,7 @@ struct LessonIntroView: View {
         .padding(28)
         .background(
             RoundedRectangle(cornerRadius: 24)
-                .fill(.glassMaterial)
+                .fill(.ultraThinMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(.white.opacity(0.2), lineWidth: 1)
@@ -273,6 +274,78 @@ struct LessonIntroView: View {
     
     @Namespace private var namespace
     
+    // MARK: - Hand Placement View
+    struct HandPlacementView: View {
+        let activeFingers: Set<Int>
+        let color: Color
+        
+        var body: some View {
+            HStack(spacing: 40) {
+                // Left Hand
+                handView(isLeft: true)
+                
+                // Right Hand
+                handView(isLeft: false)
+            }
+            .frame(height: 80)
+        }
+        
+        private func handView(isLeft: Bool) -> some View {
+            HStack(alignment: .bottom, spacing: 4) {
+                let fingers = isLeft ? [0, 1, 2, 3, 4] : [5, 6, 7, 8, 9]
+                ForEach(fingers, id: \.self) { finger in
+                    // Skip thumbs for now since they aren't mapped in AbstractKey usually
+                    if (finger == 4 || finger == 5) {
+                        // Thumbs
+                         Capsule()
+                            .fill(Color.gray.opacity(0.2))
+                            .frame(width: 15, height: 40)
+                            .rotationEffect(.degrees(isLeft ? 20 : -20))
+                    } else {
+                        // Fingers
+                        VStack {
+                            Capsule()
+                                .fill(activeFingers.contains(finger) ? color : Color.gray.opacity(0.2))
+                                .frame(width: 12, height: height(for: finger))
+                            
+                            Circle()
+                                .fill(activeFingers.contains(finger) ? color.opacity(0.5) : Color.gray.opacity(0.1))
+                                .frame(width: 8, height: 8)
+                        }
+                    }
+                }
+            }
+        }
+        
+        private func height(for finger: Int) -> CGFloat {
+            switch finger % 5 {
+            case 0: return 50 // Pinky
+            case 1: return 65 // Ring
+            case 2: return 75 // Middle
+            case 3: return 60 // Index
+            default: return 40 // Thumb
+            }
+        }
+
+        static func fingers(for keys: [AbstractKey]) -> Set<Int> {
+            var fingers = Set<Int>()
+            for key in keys {
+                switch key {
+                case .homeLeftPinky, .topLeftPinky, .bottomLeftPinky: fingers.insert(0)
+                case .homeLeftRing, .topLeftRing, .bottomLeftRing: fingers.insert(1)
+                case .homeLeftMiddle, .topLeftMiddle, .bottomLeftMiddle: fingers.insert(2)
+                case .homeLeftIndex, .topLeftIndex, .bottomLeftIndex: fingers.insert(3)
+                case .homeRightIndex, .topRightIndex, .bottomRightIndex: fingers.insert(6)
+                case .homeRightMiddle, .topRightMiddle, .bottomRightMiddle: fingers.insert(7)
+                case .homeRightRing, .topRightRing, .bottomRightRing: fingers.insert(8)
+                case .homeRightPinky, .topRightPinky, .bottomRightPinky: fingers.insert(9)
+                default: break
+                }
+            }
+            return fingers
+        }
+    }
+
     // MARK: - Keyboard Visualizer
     private var keyboardVisualizer: some View {
         VStack(spacing: 8) {
