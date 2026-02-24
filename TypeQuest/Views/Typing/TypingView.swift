@@ -112,14 +112,15 @@ struct TypingView: View {
             
 
         }
-        .overlay(alignment: .topTrailing) {
-            Text(viewModel.debugStatus)
-                .font(.system(size: 10, design: .monospaced))
-                .foregroundColor(.gray)
-                .padding()
-                .background(Color.black.opacity(0.7))
-                .cornerRadius(4)
-                .padding()
+        // Debug overlay removed for release
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 24) {
+                    ToolbarMetric(label: "WPM",      value: String(format: "%.0f",   viewModel.wpm),      color: .indigoPrimary)
+                    ToolbarMetric(label: "Accuracy", value: String(format: "%.0f%%", viewModel.accuracy), color: .success)
+                    ToolbarMetric(label: "Time",     value: String(format: "%.0fs",  viewModel.elapsedTime), color: .secondary)
+                }
+            }
         }
         .background(colorScheme == .dark ? Color.canvasDark : Color.canvasLight)
         .onAppear {
@@ -227,7 +228,7 @@ struct TypingView: View {
                     .underline(true, color: .indigoPrimary)
             } else {
                 // Pending
-                output = output + Text(s).foregroundColor(.textTertiaryLight)
+                output = output + Text(s).foregroundColor(.textTertiaryDark)
             }
         }
         
@@ -308,7 +309,7 @@ struct MetricItem: View {
             Text(label.uppercased())
                 .font(.caption)
                 .fontWeight(.bold)
-                .foregroundColor(.textTertiaryLight)
+                .foregroundColor(.textSecondaryDark)
             Text(value)
                 .font(.title)
                 .fontDesign(.monospaced)
@@ -634,3 +635,23 @@ extension HandOverlayView {
     }
 }
 
+
+// MARK: - Toolbar Metric (compact, for macOS toolbar)
+
+struct ToolbarMetric: View {
+    let label: String
+    let value: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 1) {
+            Text(value)
+                .font(.system(size: 14, weight: .bold, design: .monospaced))
+                .foregroundColor(color)
+            Text(label)
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundColor(.secondary)
+                .tracking(0.5)
+        }
+    }
+}

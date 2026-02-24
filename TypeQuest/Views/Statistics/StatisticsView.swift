@@ -109,8 +109,8 @@ struct StatisticsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Time Range Selector
-                timeRangeSelector
+                // Time Range Selector — moved to toolbar
+                // timeRangeSelector
                 
                 // Overview Stats
                 overviewSection
@@ -136,6 +136,18 @@ struct StatisticsView: View {
             .padding()
         }
         .navigationTitle("Statistics")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Picker("Time Range", selection: $selectedTimeRange) {
+                    ForEach(TimeRange.allCases, id: \.self) { range in
+                        Text(range.rawValue).tag(range)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 300)
+                .help("Filter statistics by time period")
+            }
+        }
         .onAppear {
             loadData()
         }
@@ -256,7 +268,7 @@ struct StatisticsView: View {
                     .foregroundStyle(.green)
                     .interpolationMethod(.catmullRom)
                 }
-                .chartYScale(domain: 80...100)
+                .chartYScale(domain: (sessionsByDay.map(\.avgAccuracy).min().map { max(0, $0 - 5) } ?? 0)...100)
                 .chartXAxis {
                     AxisMarks(values: .automatic(desiredCount: 5)) { value in
                         AxisGridLine()
