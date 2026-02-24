@@ -7,7 +7,7 @@ final class DataManager: ObservableObject {
     static let shared = DataManager()
     
     private var modelContainer: ModelContainer?
-    private var modelContext: ModelContext?
+    var modelContext: ModelContext?
     
     @Published var currentUser: UserProfile?
     @Published var isSyncing: Bool = false
@@ -25,7 +25,8 @@ final class DataManager: ObservableObject {
                 UserSettings.self,
                 SessionData.self,
                 KeyPerformance.self,
-                LanguageProgress.self
+                LanguageProgress.self,
+                ShopItem.self
             ])
             
             // Enable CloudKit sync with container identifier
@@ -151,10 +152,28 @@ final class DataManager: ObservableObject {
     }
     
     var lastPracticeDate: Date? { currentUser?.lastPracticeDate }
-    
+
     func saveUser() {
         try? modelContext?.save()
         syncToWidget()
+    }
+
+    // MARK: - Shop Persistence
+
+    /// Fetches all shop items from SwiftData, seeding defaults if none exist.
+    func fetchShopItems(defaults: [ShopItem]) -> [ShopItem] {
+        guard let context = modelContext else { return defaults }
+        let descriptor = FetchDescriptor<ShopItem>()
+        let existing = (try? context.fetch(descriptor)) ?? []
+        guard existing.isEmpty else { return existing }
+        // Seed defaults into SwiftData on first launch
+        for item in defaults { context.insert(item) }
+        try? context.save()
+        return defaults
+    }
+
+    func saveShopContext() {
+        try? modelContext?.save()
     }
     
     // MARK: - Widget Sync
