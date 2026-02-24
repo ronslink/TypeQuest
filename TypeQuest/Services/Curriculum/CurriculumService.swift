@@ -45,8 +45,11 @@ final class CurriculumService: ObservableObject {
         // Since UserProfile tracks progress (LanguageProgress), we could check that.
         // For now, let's just find the first available lesson.
         
-        // Ensure curriculum matches user language
-        if stages.isEmpty || !stages.first!.modules.first!.lessons.first!.id.contains(userProfile.primaryLanguage) {
+        // Ensure curriculum matches user language - safely check first
+        if let firstStage = stages.first,
+           let firstModule = firstStage.modules.first,
+           let firstLesson = firstModule.lessons.first,
+           !firstLesson.id.contains(userProfile.primaryLanguage) {
              loadCurriculum(language: userProfile.primaryLanguage)
         }
 
