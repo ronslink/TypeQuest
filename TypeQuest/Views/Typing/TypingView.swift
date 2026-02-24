@@ -622,6 +622,10 @@ extension HandOverlayView {
                 case .homeRightPinky, .topRightPinky, .bottomRightPinky, .numRightPinky, 
                      .topRightPinky2, .topRightPinky3, .bottomRightPinky2, .bottomRightPinky3, .homeRightPinky2:
                     return [9]
+                    
+                case .homeLeftThumb: return [4]
+                case .homeRightThumb: return [5]
+                case .space: return [4, 5]
                 }
             }
         }

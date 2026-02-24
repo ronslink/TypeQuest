@@ -75,6 +75,9 @@ public enum AbstractKey: String, Codable, Hashable, CaseIterable {
     // Row 3 (Numbers - MVP placeholder group)
     case numLeftPinky, numLeftRing, numLeftMiddle, numLeftIndex
     case numRightIndex, numRightMiddle, numRightRing, numRightPinky
+    
+    // Special Keys
+    case homeLeftThumb, homeRightThumb, space
 }
 
 public struct Exercise: Codable {

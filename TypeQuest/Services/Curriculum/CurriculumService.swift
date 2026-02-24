@@ -390,6 +390,8 @@ extension CurriculumService {
                  .topRightPinky2, .topRightPinky3, .bottomRightPinky2, .bottomRightPinky3,
                  .homeRightPinky2:
                 columns.insert(.rightPinky)
+            case .homeLeftThumb, .homeRightThumb, .space:
+                break
             }
         }
         

@@ -61,6 +61,9 @@ final class LayoutAdapter: Sendable {
         case .bottomRightRing: return "."
         case .bottomRightPinky: return "/"
             
+        // Special Keys
+        case .homeLeftThumb, .homeRightThumb, .space: return " "
+            
         // Number Row (Defaults)
         default: return "?" // MVP fallback for nums
         }
@@ -98,6 +101,9 @@ final class LayoutAdapter: Sendable {
         case .bottomRightRing: return ":"
         case .bottomRightPinky: return "!"
             
+        // Special Keys
+        case .homeLeftThumb, .homeRightThumb, .space: return " "
+
          // Number Row (Defaults)
         default: return "?"
         }

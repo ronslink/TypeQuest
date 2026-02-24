@@ -348,16 +348,16 @@ struct FingerColorGuideView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            Text("Finger Color Guide")
+            Text("finger_color_guide".localized)
                 .font(.caption.bold())
                 .foregroundColor(.secondary)
             
             HStack(spacing: 16) {
-                FingerColorItem(color: .pink, label: "Pinky", keys: "A Q Z 1")
-                FingerColorItem(color: .orange, label: "Ring", keys: "S W X 2")
-                FingerColorItem(color: .yellow, label: "Middle", keys: "D E C 3")
-                FingerColorItem(color: .green, label: "Index", keys: "F G R T V B")
-                FingerColorItem(color: .indigo, label: "Thumb", keys: "Space")
+                FingerColorItem(color: .pink, label: "pinky".localized, keys: "A Q Z 1")
+                FingerColorItem(color: .orange, label: "ring".localized, keys: "S W X 2")
+                FingerColorItem(color: .yellow, label: "middle".localized, keys: "D E C 3")
+                FingerColorItem(color: .green, label: "index".localized, keys: "F G R T V B")
+                FingerColorItem(color: .indigo, label: "thumb".localized, keys: "Space")
             }
         }
         .padding(16)
@@ -412,7 +412,7 @@ struct KeyboardWithHandGuideView: View {
             )
             
             // Instructional text
-            Text("Tap the keyboard to toggle hand overlay")
+            Text("tap_to_toggle_hand".localized)
                 .font(.caption)
                 .foregroundColor(.secondary.opacity(0.7))
         }

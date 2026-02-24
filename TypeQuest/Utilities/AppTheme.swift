@@ -129,7 +129,14 @@ final class Localizer: ObservableObject {
             "lesson_label": "Lesson",
             "focus_label": "Focus",
             "active_keys": "Active Keys",
-            "rest_fingers_here": "Rest Fingers Here"
+            "rest_fingers_here": "Rest Fingers Here",
+            "finger_color_guide": "Finger Color Guide",
+            "tap_to_toggle_hand": "Tap keyboard to toggle hand",
+            "pinky": "Pinky",
+            "ring": "Ring",
+            "middle": "Middle",
+            "index": "Index",
+            "thumb": "Thumb"
         ],
         "es": [
             "settings": "Ajustes",
@@ -230,7 +237,14 @@ final class Localizer: ObservableObject {
             "lesson_label": "Lektion",
             "focus_label": "Fokus",
             "active_keys": "Aktive Tasten",
-            "rest_fingers_here": "Finger hier ruhen lassen"
+            "rest_fingers_here": "Finger hier ruhen lassen",
+            "finger_color_guide": "Finger-Farbhilfe",
+            "tap_to_toggle_hand": "Tippe Tastatur für Hand-Overlay",
+            "pinky": "Kleiner",
+            "ring": "Ring",
+            "middle": "Mittel",
+            "index": "Zeige",
+            "thumb": "Daumen"
         ],
         "nl": [
             "settings": "Instellingen",
