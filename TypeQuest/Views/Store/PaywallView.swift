@@ -229,7 +229,7 @@ struct PaywallView: View {
                     
                     if let product = yearlyProduct {
                         let monthlyEquivalent = product.price / 12
-                        Text("相当于 \(monthlyEquivalent, specifier: "%.2f")/月")
+                        Text("Equivalent to \(monthlyEquivalent, specifier: "%.2f")/month")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         
@@ -243,7 +243,7 @@ struct PaywallView: View {
                             .foregroundStyle(.secondary)
                         
                         if yearlySavingsPercent > 0 {
-                            Text("节省 \(yearlySavingsPercent)%")
+                            Text("Save \(yearlySavingsPercent)%")
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.green)
@@ -299,7 +299,7 @@ struct PaywallView: View {
                             .scaleEffect(0.8)
                             .tint(.white)
                     } else {
-                        Text("立即订阅")
+                        Text("Subscribe Now")
                             .font(.headline)
                     }
                 }
@@ -316,7 +316,7 @@ struct PaywallView: View {
             Button {
                 restorePurchases()
             } label: {
-                Text("恢复购买")
+                Text("Restore Purchases")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -327,7 +327,7 @@ struct PaywallView: View {
     
     private var footerSection: some View {
         VStack(spacing: 8) {
-            Text("订阅将自动续订除非在当前期结束前24小时取消")
+            Text("Subscriptions automatically renew unless cancelled 24 hours before end of period")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -347,7 +347,7 @@ struct PaywallView: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                 
-                Link("订阅条款", destination: URL(string: "https://support.apple.com/help/subscriptions-and-reminders")!)
+                Link("Subscription Terms", destination: URL(string: "https://support.apple.com/help/subscriptions-and-reminders")!)
                     .font(.caption2)
             }
         }
