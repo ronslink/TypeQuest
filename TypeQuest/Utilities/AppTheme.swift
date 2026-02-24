@@ -744,8 +744,6 @@ final class StoreManager: ObservableObject {
                 break
             case .pending:
                 break
-            case .pending:
-                break
             @unknown default:
                 break
             }
