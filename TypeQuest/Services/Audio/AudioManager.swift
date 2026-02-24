@@ -112,10 +112,26 @@ final class AudioManager: ObservableObject {
         guard musicEnabled else { return }
         stopMusic()
         
-        guard let url = Bundle.main.url(forResource: track.rawValue, withExtension: "mp3", subdirectory: "Music") else { return }
+        // Try flow_state subdirectory first
+        var url = Bundle.main.url(forResource: track.rawValue, withExtension: "mp3", subdirectory: "Audio/Music/flow_state")
+        
+        // Fallback to Music/flow_state
+        if url == nil {
+            url = Bundle.main.url(forResource: track.rawValue, withExtension: "mp3", subdirectory: "Music/flow_state")
+        }
+        
+        // Fallback to just Music folder
+        if url == nil {
+            url = Bundle.main.url(forResource: track.rawValue, withExtension: "mp3", subdirectory: "Music")
+        }
+        
+        guard let musicURL = url else {
+            print("Music file not found: \(track.rawValue)")
+            return
+        }
         
         do {
-            backgroundMusicPlayer = try AVAudioPlayer(contentsOf: url)
+            backgroundMusicPlayer = try AVAudioPlayer(contentsOf: musicURL)
             backgroundMusicPlayer?.volume = Float(musicVolume)
             backgroundMusicPlayer?.numberOfLoops = -1
             backgroundMusicPlayer?.play()
@@ -156,5 +172,15 @@ enum SoundType: String, CaseIterable {
 }
 
 enum MusicTrack: String, CaseIterable {
-    case focus, energetic, zen, victory
+    case flowLevel1 = "level_1"
+    case flowLevel2 = "level_2"  
+    case flowLevel3 = "level_3"
+    
+    var displayName: String {
+        switch self {
+        case .flowLevel1: return "Focus Flow"
+        case .flowLevel2: return "Deep Focus"
+        case .flowLevel3: return "Maximum Flow"
+        }
+    }
 }
