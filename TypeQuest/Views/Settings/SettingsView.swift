@@ -201,6 +201,33 @@ struct SettingsView: View {
                     .disabled(!CloudKitManager.shared.isCloudAvailable)
                 }
                 
+                // Accessibility Section
+                SettingsSection(title: "Accessibility") {
+                    if let user = dataManager.currentUser, let settings = user.settings {
+                        let reduceMotionBinding = Binding<Bool>(
+                            get: { settings.reduceMotion },
+                            set: { newValue in
+                                settings.reduceMotion = newValue
+                                try? dataManager.saveUser()
+                            }
+                        )
+                        
+                        let highContrastBinding = Binding<Bool>(
+                            get: { settings.highContrastMode },
+                            set: { newValue in
+                                settings.highContrastMode = newValue
+                                try? dataManager.saveUser()
+                            }
+                        )
+                        
+                        Toggle("Reduce Motion", isOn: reduceMotionBinding)
+                            .toggleStyle(SwitchToggleStyle(tint: .indigoPrimary))
+                        
+                        Toggle("High Contrast Mode", isOn: highContrastBinding)
+                            .toggleStyle(SwitchToggleStyle(tint: .indigoPrimary))
+                    }
+                }
+                
                 // Data Section
                 SettingsSection(title: "Data") {
                     Button(role: .destructive) {

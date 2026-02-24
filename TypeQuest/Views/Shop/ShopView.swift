@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct ShopView: View {
     @StateObject private var viewModel = ShopViewModel()
@@ -58,6 +59,7 @@ struct ShopView: View {
                         ShopItemCard(item: item) {
                             viewModel.purchase(item)
                         }
+                        .id(item.id)
                     }
                 }
                 .padding()
@@ -98,44 +100,63 @@ struct ShopItemCard: View {
             // Icon
             ZStack {
                 Circle()
-                    .fill(item.isPurchased ? Color.success.opacity(0.2) : Color.indigoPrimary.opacity(0.2))
+                    .fill(
+                        LinearGradient(
+                            colors: [.indigoPrimary.opacity(0.3), .purple.opacity(0.3)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .frame(width: 80, height: 80)
                 
                 Image(systemName: item.iconName)
                     .font(.system(size: 32))
-                    .foregroundColor(item.isPurchased ? .success : .indigoPrimary)
+                    .foregroundStyle(.white)
             }
             
-            // Info
-            Text(item.name)
-                .font(.headline)
-                .foregroundColor(.white)
-            
-            Text(item.itemDescription)
-                .font(.caption)
-                .foregroundColor(.textSecondaryDark)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-            
-            // Action
-            if item.isPurchased {
-                Text(item.isEquipped ? "Equipped" : "Owned")
+            // Name & Description
+            VStack(spacing: 4) {
+                Text(item.name)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                
+                Text(item.itemDescription)
                     .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.success)
+                    .foregroundColor(.textSecondaryDark)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+            }
+            
+            // Price or Status
+            if item.isPurchased {
+                if item.isEquipped {
+                    Label("Equipped", systemImage: "checkmark.circle.fill")
+                        .font(.subheadline)
+                        .foregroundColor(.success)
+                } else {
+                    Button("Equip") {
+                        // TODO: Implement equip functionality
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.indigoPrimary)
+                }
             } else {
-                Button(action: onPurchase) {
-                    HStack {
+                Button {
+                    onPurchase()
+                } label: {
+                    HStack(spacing: 4) {
                         Image(systemName: "drop.fill")
+                            .font(.caption)
                         Text("\(item.price)")
+                            .fontWeight(.bold)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(Color.indigoPrimary)
                     .foregroundColor(.white)
-                    .cornerRadius(8)
+                    .cornerRadius(20)
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding()
@@ -164,17 +185,15 @@ class ShopViewModel: ObservableObject {
     func loadData() {
         inkBalance = dataManager.currentUser?.inkCurrency ?? 0
         
-        // Mock items for now - in production, these would come from a database
-        availableItems = [
-            ShopItem(name: "Midnight Theme", itemDescription: "Dark purple keyboard", category: .keyboardTheme, price: 100, iconName: "moon.stars"),
-            ShopItem(name: "Ocean Theme", itemDescription: "Deep blue vibes", category: .keyboardTheme, price: 150, iconName: "water.waves"),
-            ShopItem(name: "Sunset Theme", itemDescription: "Warm orange glow", category: .keyboardTheme, price: 150, iconName: "sun.horizon"),
-            ShopItem(name: "Robot Avatar", itemDescription: "Beep boop!", category: .avatar, price: 200, iconName: "cpu"),
-            ShopItem(name: "Wizard Avatar", itemDescription: "Master of keys", category: .avatar, price: 250, iconName: "wand.and.stars"),
-            ShopItem(name: "Speed Badge", itemDescription: "For the swift", category: .badge, price: 50, iconName: "hare"),
-            ShopItem(name: "Accuracy Badge", itemDescription: "Precision matters", category: .badge, price: 50, iconName: "target"),
-            ShopItem(name: "2x XP Boost", itemDescription: "Next 5 lessons", category: .powerUp, price: 300, iconName: "bolt")
-        ]
+        // Try to fetch purchased items from SwiftData
+        loadPersistedItems()
+        
+        // If no items exist, create defaults
+        if availableItems.isEmpty {
+            availableItems = createDefaultItems()
+            // Save default items to SwiftData
+            saveItemsToSwiftData()
+        }
     }
     
     func items(for category: ShopCategory) -> [ShopItem] {
@@ -187,10 +206,73 @@ class ShopViewModel: ObservableObject {
         // Deduct balance
         inkBalance -= item.price
         dataManager.currentUser?.inkCurrency = inkBalance
+        try? dataManager.saveUser()
         
-        // Mark as purchased
+        // Mark as purchased in our local array
         if let index = availableItems.firstIndex(where: { $0.id == item.id }) {
             availableItems[index].isPurchased = true
         }
+        
+        // Persist the purchase to SwiftData
+        persistPurchase(item)
+    }
+    
+    // MARK: - Persistence
+    
+    private func loadPersistedItems() {
+        // Load items that were previously purchased
+        // For now, we'll check UserDefaults as a simple persistence layer
+        // In production, this would query SwiftData
+        
+        let purchasedIDs = UserDefaults.standard.stringArray(forKey: "purchasedShopItems") ?? []
+        
+        // Create default items with purchase status from persistence
+        availableItems = createDefaultItems().map { item in
+            var mutableItem = item
+            mutableItem.isPurchased = purchasedIDs.contains(item.id.uuidString)
+            return mutableItem
+        }
+    }
+    
+    private func persistPurchase(_ item: ShopItem) {
+        var purchasedIDs = UserDefaults.standard.stringArray(forKey: "purchasedShopItems") ?? []
+        
+        if !purchasedIDs.contains(item.id.uuidString) {
+            purchasedIDs.append(item.id.uuidString)
+            UserDefaults.standard.set(purchasedIDs, forKey: "purchasedShopItems")
+        }
+    }
+    
+    private func saveItemsToSwiftData() {
+        // Save all items to SwiftData for future reference
+        for item in availableItems {
+            dataManager.modelContext?.insert(item)
+        }
+        try? dataManager.modelContext?.save()
+    }
+    
+    private func createDefaultItems() -> [ShopItem] {
+        return [
+            // Keyboard Themes
+            ShopItem(name: "Midnight Theme", itemDescription: "Dark purple keyboard", category: .keyboardTheme, price: 100, iconName: "moon.stars"),
+            ShopItem(name: "Ocean Theme", itemDescription: "Deep blue vibes", category: .keyboardTheme, price: 150, iconName: "water.waves"),
+            ShopItem(name: "Sunset Theme", itemDescription: "Warm orange glow", category: .keyboardTheme, price: 150, iconName: "sun.horizon"),
+            ShopItem(name: "Neon Theme", itemDescription: "Glow in the dark", category: .keyboardTheme, price: 200, iconName: "sparkles"),
+            ShopItem(name: "Forest Theme", itemDescription: "Nature vibes", category: .keyboardTheme, price: 120, iconName: "leaf"),
+            
+            // Avatars
+            ShopItem(name: "Robot Avatar", itemDescription: "Beep boop!", category: .avatar, price: 200, iconName: "cpu"),
+            ShopItem(name: "Wizard Avatar", itemDescription: "Master of keys", category: .avatar, price: 250, iconName: "wand.and.stars"),
+            ShopItem(name: "Ninja Avatar", itemDescription: "Silent but deadly", category: .avatar, price: 300, iconName: "star.circle"),
+            
+            // Badges
+            ShopItem(name: "Speed Badge", itemDescription: "For the swift", category: .badge, price: 50, iconName: "hare"),
+            ShopItem(name: "Accuracy Badge", itemDescription: "Precision matters", category: .badge, price: 50, iconName: "target"),
+            ShopItem(name: "Master Badge", itemDescription: "Typing master", category: .badge, price: 500, iconName: "crown"),
+            
+            // Power-Ups
+            ShopItem(name: "2x XP Boost", itemDescription: "Next 5 lessons", category: .powerUp, price: 300, iconName: "bolt"),
+            ShopItem(name: "Hint Pack", itemDescription: "10 hints included", category: .powerUp, price: 150, iconName: "questionmark.circle")
+        ]
     }
 }

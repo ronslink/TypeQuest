@@ -6,15 +6,53 @@ import AudioToolbox
 final class AudioManager: ObservableObject {
     static let shared = AudioManager()
     
-    @Published var soundEnabled: Bool = true
-    @Published var musicEnabled: Bool = true
-    @Published var soundVolume: Double = 0.7
-    @Published var musicVolume: Double = 0.5
+    // MARK: - UserDefaults Keys
+    private enum Keys {
+        static let soundEnabled = "audio_soundEnabled"
+        static let musicEnabled = "audio_musicEnabled"
+        static let soundVolume = "audio_soundVolume"
+        static let musicVolume = "audio_musicVolume"
+    }
+    
+    // MARK: - Published Properties (with persistence)
+    @Published var soundEnabled: Bool {
+        didSet { UserDefaults.standard.set(soundEnabled, forKey: Keys.soundEnabled) }
+    }
+    @Published var musicEnabled: Bool {
+        didSet { UserDefaults.standard.set(musicEnabled, forKey: Keys.musicEnabled) }
+    }
+    @Published var soundVolume: Double {
+        didSet { UserDefaults.standard.set(soundVolume, forKey: Keys.soundVolume) }
+    }
+    @Published var musicVolume: Double {
+        didSet { UserDefaults.standard.set(musicVolume, forKey: Keys.musicVolume) }
+    }
     
     private var audioPlayers: [String: AVAudioPlayer] = [:]
     private var backgroundMusicPlayer: AVAudioPlayer?
     
-    private init() {}
+    // MARK: - Initialization
+    
+    private init() {
+        // Load persisted settings or use defaults
+        let defaults = UserDefaults.standard
+        
+        // Register defaults
+        defaults.register(defaults: [
+            Keys.soundEnabled: true,
+            Keys.musicEnabled: true,
+            Keys.soundVolume: 0.7,
+            Keys.musicVolume: 0.5
+        ])
+        
+        // Load saved values
+        self.soundEnabled = defaults.bool(forKey: Keys.soundEnabled)
+        self.musicEnabled = defaults.bool(forKey: Keys.musicEnabled)
+        self.soundVolume = defaults.double(forKey: Keys.soundVolume)
+        self.musicVolume = defaults.double(forKey: Keys.musicVolume)
+    }
+    
+    // MARK: - Sound Playback
     
     func playSound(_ soundType: SoundType) {
         guard soundEnabled else { return }
@@ -50,19 +88,12 @@ final class AudioManager: ObservableObject {
     }
     
     private func playSystemSoundFallback(for soundName: String) {
-        // Fallback IDs for macOS System Sounds
-        // Note: Actual IDs vary by OS version, using standard alert sounds
         var soundID: SystemSoundID = 0
-        
-        // Map sound names to system sounds
-        // correct_key -> Tock (1104)
-        // error_key -> Sosumi/Basso (1053)
-        // session_complete -> Hero (1051)
         
         switch soundName {
         case "correct_key": soundID = 1104
         case "error_key": soundID = 1053
-        case "backspace": soundID = 1105 // Tink
+        case "backspace": soundID = 1105
         case "session_complete": soundID = 1016
         case "level_up": soundID = 1024
         case "race_start": soundID = 1000
@@ -74,6 +105,8 @@ final class AudioManager: ObservableObject {
         
         AudioServicesPlaySystemSound(soundID)
     }
+    
+    // MARK: - Music Playback
     
     func playMusic(_ track: MusicTrack) {
         guard musicEnabled else { return }
@@ -95,7 +128,18 @@ final class AudioManager: ObservableObject {
         backgroundMusicPlayer?.stop()
         backgroundMusicPlayer = nil
     }
+    
+    // MARK: - Reset
+    
+    func resetToDefaults() {
+        soundEnabled = true
+        musicEnabled = true
+        soundVolume = 0.7
+        musicVolume = 0.5
+    }
 }
+
+// MARK: - Sound Types
 
 enum SoundType: String, CaseIterable {
     case correctKey = "correct_key"
