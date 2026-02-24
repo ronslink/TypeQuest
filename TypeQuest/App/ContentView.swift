@@ -66,7 +66,7 @@ struct ContentView: View {
                     GameSelectionView()
                 }
             case .stats:
-                Text("Statistics Dashboard")
+                StatisticsView()
             case .settings:
                 SettingsView()
             case .none:
