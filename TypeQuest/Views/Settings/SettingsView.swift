@@ -6,6 +6,9 @@ struct SettingsView: View {
     @ObservedObject private var localizer = Localizer.shared
     @EnvironmentObject var navigationManager: NavigationManager
     
+    @State private var showResetConfirmation = false
+    @State private var showResetSuccess = false
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -230,12 +233,45 @@ struct SettingsView: View {
                 
                 // Data Section
                 SettingsSection(title: "Data") {
-                    Button(role: .destructive) {
-                        // Reset Logic
-                    } label: {
-                        Text("reset_progress".localized)
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Reset Progress")
+                                .foregroundColor(.error)
+                            Text("Clears XP, levels, streaks and all session history. Shop items and settings are kept.")
+                                .font(.caption)
+                                .foregroundColor(.textTertiaryDark)
+                        }
+                        Spacer()
+                        Button(role: .destructive) {
+                            showResetConfirmation = true
+                        } label: {
+                            Text("Reset…")
+                                .foregroundColor(.error)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.error.opacity(0.12))
+                        .cornerRadius(8)
                     }
-                    .interactivePress()
+                    .confirmationDialog(
+                        "Reset all progress?",
+                        isPresented: $showResetConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button("Reset Everything", role: .destructive) {
+                            dataManager.resetProgress()
+                            showResetSuccess = true
+                        }
+                        Button("Cancel", role: .cancel) { }
+                    } message: {
+                        Text("This will delete your XP, levels, streaks, and all session history. This cannot be undone. Your shop purchases and settings will be kept.")
+                    }
+                    .alert("Progress Reset", isPresented: $showResetSuccess) {
+                        Button("OK") { }
+                    } message: {
+                        Text("Your progress has been reset. You're back to Level 1 — time to climb again!")
+                    }
                 }
                 
                 // About

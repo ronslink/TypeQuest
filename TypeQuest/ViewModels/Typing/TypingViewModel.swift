@@ -460,6 +460,13 @@ final class TypingViewModel: ObservableObject {
                 
                 levelViewModel.addXP(totalXP)
                 streakViewModel.updateStreak()
+
+                // Award Ink (in-app currency) — formula: 10 base + 1 per 10 WPM + 1 per 2% accuracy bonus
+                let inkReward = 10 + Int(avgWPM / 10) + Int(max(0, avgAccuracy - 80) / 2)
+                if let user = DataManager.shared.currentUser {
+                    user.inkCurrency += inkReward
+                    DataManager.shared.saveUser()
+                }
                 
                 // Submit to Game Center
                 GameCenterManager.shared.submitWPMScore(Int(avgWPM))
@@ -469,6 +476,14 @@ final class TypingViewModel: ObservableObject {
                 // Notify
                 NotificationCenter.default.post(name: .lessonCompleted, object: nil, userInfo: ["lessonId": lesson.id])
             }
+        } else {
+            // Free-practice session: award small ink (5 flat + 1 per 10 WPM)
+            let practiceInk = 5 + Int(avgWPM / 10)
+            if let user = DataManager.shared.currentUser {
+                user.inkCurrency += practiceInk
+                DataManager.shared.saveUser()
+            }
+            streakViewModel.updateStreak()
         }
         
         savePerformanceData()

@@ -156,9 +156,35 @@ struct SidebarView: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                Text("Level \(dataManager.currentUser?.currentLevel ?? 1)  ·  \(dataManager.currentUser?.totalXP ?? 0) XP")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
+                HStack(spacing: 6) {
+                        Text("Lv.\(dataManager.currentUser?.currentLevel ?? 1)")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.secondary)
+                        Text("·")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary.opacity(0.5))
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 9))
+                            .foregroundColor(
+                                (dataManager.currentUser?.currentStreak ?? 0) > 0
+                                ? .orange : .secondary.opacity(0.4)
+                            )
+                        Text("\(dataManager.currentUser?.currentStreak ?? 0)")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(
+                                (dataManager.currentUser?.currentStreak ?? 0) > 0
+                                ? .orange : .secondary
+                            )
+                        Text("·")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary.opacity(0.5))
+                        Image(systemName: "drop.fill")
+                            .font(.system(size: 9))
+                            .foregroundColor(.cyanAccent)
+                        Text("\(dataManager.currentUser?.inkCurrency ?? 0)")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.cyanAccent)
+                    }
             }
 
             Spacer()

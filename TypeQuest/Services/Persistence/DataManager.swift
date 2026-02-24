@@ -52,6 +52,8 @@ final class DataManager: ObservableObject {
         let settings = UserSettings(layout: layout, hasCompletedOnboarding: true)
         user.settings = settings
         
+        // Grant starter Ink so new users can immediately explore the Shop
+        user.inkCurrency = 100
         modelContext?.insert(user)
         try? modelContext?.save()
         currentUser = user
@@ -175,7 +177,45 @@ final class DataManager: ObservableObject {
     func saveShopContext() {
         try? modelContext?.save()
     }
-    
+
+    // MARK: - Reset Progress
+
+    /// Resets all user progress: XP, level, streaks, completed lessons, and sessions.
+    /// Does NOT reset username, settings, language, or purchased shop items.
+    func resetProgress() {
+        guard let user = currentUser, let context = modelContext else { return }
+
+        // Reset user stats
+        user.totalXP = 0
+        user.currentLevel = 1
+        user.currentStreak = 0
+        user.longestStreak = 0
+        user.lastPracticeDate = Date()
+
+        // Clear language progress (completed lessons, unlocked stages)
+        if let progressList = user.progress {
+            for progress in progressList {
+                progress.completedLessons = []
+                progress.unlockedStages = [1]
+                progress.bestWPM = 0
+                progress.bestAccuracy = 0
+                progress.totalPracticeTime = 0
+            }
+        }
+
+        // Delete all session data and key performance records
+        let sessionDescriptor = FetchDescriptor<SessionData>()
+        let sessions = (try? context.fetch(sessionDescriptor)) ?? []
+        sessions.forEach { context.delete($0) }
+
+        let keyPerfDescriptor = FetchDescriptor<KeyPerformance>()
+        let keyPerfs = (try? context.fetch(keyPerfDescriptor)) ?? []
+        keyPerfs.forEach { context.delete($0) }
+
+        try? context.save()
+        syncToWidget()
+    }
+
     // MARK: - Widget Sync
     private func syncToWidget() {
         guard let user = currentUser else { return }

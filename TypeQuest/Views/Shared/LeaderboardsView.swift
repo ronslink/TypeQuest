@@ -4,6 +4,7 @@ import SwiftUI
 struct LeaderboardsView: View {
     @StateObject private var gameCenterManager = GameCenterManager.shared
     @State private var selectedLeaderboard: LeaderboardType = .wpm
+    @StateObject private var dataManager = DataManager.shared
     
     enum LeaderboardType: String, CaseIterable {
         case wpm = "WPM Record"
@@ -15,6 +16,14 @@ struct LeaderboardsView: View {
             case .wpm: return "speedometer"
             case .xp: return "star.fill"
             case .streak: return "flame.fill"
+            }
+        }
+
+        var unit: String {
+            switch self {
+            case .wpm: return "WPM"
+            case .xp: return "XP"
+            case .streak: return "days"
             }
         }
     }
@@ -126,56 +135,119 @@ struct LeaderboardsView: View {
     }
     
     private var currentScoreCard: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
+            // Header
             HStack {
-                Image(systemName: selectedLeaderboard.icon)
-                    .font(.title)
-                    .foregroundStyle(.orange)
-                
-                Text(selectedLeaderboard.rawValue)
+                Label(selectedLeaderboard.rawValue, systemImage: selectedLeaderboard.icon)
                     .font(.headline)
-                
+                    .foregroundStyle(.primary)
+
                 Spacer()
+
+                // Open native Game Center overlay
+                Button {
+                    gameCenterManager.showLeaderboard()
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Full Rankings")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                        Image(systemName: "arrow.up.right.square")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.indigoPrimary)
+                }
+                .buttonStyle(.plain)
+                .help("Open Game Center leaderboard")
             }
-            
-            // Placeholder scores - in production these would load from Game Center
-            VStack(spacing: 8) {
-                rankRow(rank: 1, name: "TypingMaster", score: "142 WPM", isCurrentUser: false)
-                rankRow(rank: 2, name: "SpeedDemon", score: "128 WPM", isCurrentUser: false)
-                rankRow(rank: 3, name: "KeyboardNinja", score: "115 WPM", isCurrentUser: false)
-                rankRow(rank: 4, name: "Your Score", score: "--", isCurrentUser: true)
+
+            Divider()
+
+            // Your best score card
+            HStack(spacing: 16) {
+                // Avatar
+                ZStack {
+                    Circle()
+                        .fill(LinearGradient(colors: [.indigoPrimary, .cyanAccent],
+                                             startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 44, height: 44)
+                    if let alias = gameCenterManager.localPlayer?.alias,
+                       let initial = alias.first {
+                        Text(String(initial).uppercased())
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                    } else {
+                        Image(systemName: "person.fill")
+                            .foregroundColor(.white)
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(gameCenterManager.localPlayer?.alias ?? "You")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+
+                    Text("Your personal best")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(personalBestScore)
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundColor(.indigoPrimary)
+                    Text(selectedLeaderboard.unit)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
+            .padding(12)
+            .background(Color.indigoPrimary.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+            // CTA to open native leaderboard
+            Button {
+                gameCenterManager.showLeaderboard()
+            } label: {
+                HStack {
+                    Image(systemName: "trophy.fill")
+                    Text("Compare with Global Players")
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(Color.indigoPrimary)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            .buttonStyle(.plain)
+            .help("Opens Game Center to show real global rankings")
         }
         .padding()
         .background(Color(nsColor: .controlBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal)
     }
-    
-    private func rankRow(rank: Int, name: String, score: String, isCurrentUser: Bool) -> some View {
-        HStack {
-            Text("#\(rank)")
-                .font(.headline)
-                .foregroundStyle(isCurrentUser ? .orange : .secondary)
-                .frame(width: 40, alignment: .leading)
-            
-            Text(name)
-                .fontWeight(isCurrentUser ? .bold : .regular)
-                .foregroundStyle(isCurrentUser ? .orange : .primary)
-            
-            Spacer()
-            
-            Text(score)
-                .font(.headline)
-                .foregroundStyle(isCurrentUser ? .orange : .secondary)
+
+    private var personalBestScore: String {
+        switch selectedLeaderboard {
+        case .wpm:
+            // Use best WPM from language progress
+            let best = dataManager.currentUser?.progress?
+                .compactMap { $0.bestWPM }
+                .max() ?? 0
+            return best > 0 ? String(format: "%.0f", best) : "--"
+        case .xp:
+            let xp = dataManager.currentUser?.totalXP ?? 0
+            return xp > 0 ? "\(xp)" : "--"
+        case .streak:
+            let streak = dataManager.currentUser?.longestStreak ?? 0
+            return streak > 0 ? "\(streak)" : "--"
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(isCurrentUser ? Color.orange.opacity(0.1) : Color.clear)
-        )
     }
+    
     
     private var howToPlaySection: some View {
         VStack(alignment: .leading, spacing: 8) {
