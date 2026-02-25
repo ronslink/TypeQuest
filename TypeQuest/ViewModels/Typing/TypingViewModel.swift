@@ -83,6 +83,10 @@ final class TypingViewModel: ObservableObject {
     @Published var showLevelUp: Bool = false
     @Published var newLevel: Int = 1
     
+    var currentStreak: Int {
+        streakViewModel.currentStreak
+    }
+    
     private func checkForLargeTextMode() {
         if let user = DataManager.shared.currentUser {
             self.isLargeTextMode = (user.ageGroup == .senior)

@@ -17,6 +17,7 @@ struct SkillTreeView: View {
                         showPractice = true
                     }
                     .padding()
+                    .coordinatedEntrance(delay: 0)
                 }
                 
                 // Stage Map
@@ -32,20 +33,14 @@ struct SkillTreeView: View {
                             showPractice = true
                         }
                     }
+                    .coordinatedEntrance(delay: 0.1 + Double(index) * 0.1)
                 }
             }
             .padding(.bottom, 40)
         }
-        .background(
-            LinearGradient(
-                colors: [Color.canvasDark, Color(red: 0.05, green: 0.08, blue: 0.15)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
         .navigationDestination(isPresented: $showPractice) {
             if let lesson = selectedLesson {
-                TypingView(lesson: lesson)
+                EnhancedTypingView(lesson: lesson)
             }
         }
         .onAppear {
@@ -266,51 +261,61 @@ struct EnhancedLessonNode: View {
                 // Outer glow ring for unlocked
                 if isUnlocked && !isCompleted {
                     Circle()
-                        .stroke(theme.primaryColor.opacity(0.3), lineWidth: 3)
-                        .frame(width: 76, height: 76)
+                        .stroke(theme.primaryColor.opacity(0.4), lineWidth: 3)
+                        .frame(width: 80, height: 80)
                         .scaleEffect(pulseScale)
+                        .shadow(color: theme.primaryColor.opacity(0.3), radius: 10)
                         .onAppear {
                             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                                pulseScale = 1.1
+                                pulseScale = 1.08
                             }
                         }
                 }
                 
-                // Main node circle
+                // Main node circle with depth
                 Circle()
                     .fill(nodeBackground)
-                    .frame(width: 70, height: 70)
-                    .shadow(color: nodeShadowColor, radius: isHovered ? 12 : 6, x: 0, y: 4)
+                    .frame(width: 72, height: 72)
+                    .shadow(color: nodeShadowColor, radius: isHovered ? 16 : 8, x: 0, y: isHovered ? 6 : 3)
+                    .overlay(
+                        // Highlight rim
+                        Circle()
+                            .stroke(Color.white.opacity(isHovered ? 0.3 : 0.15), lineWidth: 1.5)
+                    )
                 
+                // Icon or number
+                Group {
                     if isCompleted {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 28, weight: .bold))
+                            .font(.system(size: 30, weight: .bold))
                             .foregroundColor(.white)
                     } else if !isUnlocked {
                         Image(systemName: "lock.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(.white.opacity(0.4))
+                            .font(.system(size: 22))
+                            .foregroundColor(.white.opacity(0.5))
                     } else if lesson.isGatekeeper {
                         Image(systemName: "shield.checkered")
-                            .font(.system(size: 30, weight: .bold))
+                            .font(.system(size: 28, weight: .bold))
                             .foregroundColor(.white)
                     } else {
                         Text("\(lesson.order)")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .font(AppTypography.metricSmall)
                             .foregroundColor(.white)
                     }
+                }
+                .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
             }
-            .scaleEffect(isHovered ? 1.1 : 1.0)
-            .animation(.spring(response: 0.3), value: isHovered)
+            .scaleEffect(isHovered ? 1.08 : 1.0)
+            .animation(AppAnimation.component, value: isHovered)
             .onHover { hovering in
                 isHovered = hovering && isUnlocked
             }
             
             // Lesson name
             Text(lesson.name)
-                .font(.caption)
+                .font(AppTypography.caption)
                 .fontWeight(.medium)
-                .foregroundColor(isUnlocked ? .white : .gray)
+                .foregroundColor(isUnlocked ? ThemeManager.shared.currentTheme.colors.textPrimary : ThemeManager.shared.currentTheme.colors.textSecondary.opacity(0.5))
                 .frame(width: 90)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -322,7 +327,10 @@ struct EnhancedLessonNode: View {
         if isCompleted {
             return AnyShapeStyle(
                 LinearGradient(
-                    colors: [Color.success, Color.success.opacity(0.7)],
+                    colors: [
+                        ThemeManager.shared.currentTheme.colors.success,
+                        ThemeManager.shared.currentTheme.colors.success.opacity(0.7)
+                    ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -349,7 +357,7 @@ struct EnhancedLessonNode: View {
     }
     
     private var nodeShadowColor: Color {
-        if isCompleted { return .success.opacity(0.5) }
+        if isCompleted { return ThemeManager.shared.currentTheme.colors.success.opacity(0.5) }
         if isUnlocked { return theme.primaryColor.opacity(0.5) }
         return .black.opacity(0.3)
     }
@@ -361,6 +369,7 @@ struct AdaptiveLessonCard: View {
     let onSelect: () -> Void
     
     @State private var shimmer: CGFloat = -1
+    @State private var isHovered = false
     
     var body: some View {
         Button(action: onSelect) {
@@ -370,41 +379,51 @@ struct AdaptiveLessonCard: View {
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [.indigoPrimary, .cyanAccent],
+                                colors: [
+                                    ThemeManager.shared.currentTheme.colors.primary,
+                                    ThemeManager.shared.currentTheme.colors.accent
+                                ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 56, height: 56)
+                        .frame(width: 60, height: 60)
+                        .shadow(
+                            color: ThemeManager.shared.currentTheme.colors.primary.opacity(0.5),
+                            radius: 12,
+                            x: 0,
+                            y: 6
+                        )
                     
                     Image(systemName: "dumbbell.fill")
-                        .font(.title2)
+                        .font(.system(size: 24))
                         .foregroundColor(.white)
                 }
-                .shadow(color: .indigoPrimary.opacity(0.5), radius: 8)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("RECOMMENDED")
-                        .font(.caption)
+                        .font(AppTypography.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.cyanAccent)
+                        .foregroundColor(ThemeManager.shared.currentTheme.colors.accent)
                         .tracking(1.5)
                     
                     Text(lesson.name)
-                        .font(.headline)
-                        .foregroundColor(.white)
+                        .font(AppTypography.h4)
+                        .foregroundColor(ThemeManager.shared.currentTheme.colors.textPrimary)
                     
                     Text(lesson.description)
-                        .font(.caption)
-                        .foregroundColor(.textSecondaryDark)
+                        .font(AppTypography.bodySmall)
+                        .foregroundColor(ThemeManager.shared.currentTheme.colors.textSecondary)
                         .lineLimit(1)
                 }
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(.indigoPrimary)
+                    .font(.system(size: 28))
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.primary)
+                    .offset(x: isHovered ? 4 : 0)
+                    .animation(AppAnimation.micro, value: isHovered)
             }
             .padding(20)
             .background(
@@ -415,7 +434,7 @@ struct AdaptiveLessonCard: View {
                         RoundedRectangle(cornerRadius: 20)
                             .fill(
                                 LinearGradient(
-                                    colors: [.clear, .white.opacity(0.1), .clear],
+                                    colors: [.clear, .white.opacity(0.12), .clear],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -428,17 +447,31 @@ struct AdaptiveLessonCard: View {
                 RoundedRectangle(cornerRadius: 20)
                     .stroke(
                         LinearGradient(
-                            colors: [.indigoPrimary.opacity(0.5), .cyanAccent.opacity(0.3)],
+                            colors: [
+                                ThemeManager.shared.currentTheme.colors.primary.opacity(0.5),
+                                ThemeManager.shared.currentTheme.colors.accent.opacity(0.3)
+                            ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
-                        lineWidth: 1
+                        lineWidth: 1.5
                     )
+            )
+            .shadow(
+                color: ThemeManager.shared.currentTheme.colors.primary.opacity(0.1),
+                radius: isHovered ? 16 : 8,
+                x: 0,
+                y: isHovered ? 8 : 4
             )
         }
         .buttonStyle(.plain)
+        .scaleEffect(isHovered ? 1.01 : 1.0)
+        .animation(AppAnimation.component, value: isHovered)
+        .onHover { hovering in
+            isHovered = hovering
+        }
         .onAppear {
-            withAnimation(.linear(duration: 2).repeatForever(autoreverses: false)) {
+            withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
                 shimmer = 1
             }
         }

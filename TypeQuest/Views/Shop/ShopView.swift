@@ -10,40 +10,42 @@ struct ShopView: View {
             // Header
             HStack {
                 Text("Shop")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .font(AppTypography.h1)
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.textPrimary)
+                    .coordinatedEntrance(delay: 0)
 
                 Spacer()
 
                 // Currency Display
-                HStack(spacing: 8) {
+                HStack(spacing: 10) {
                     Image(systemName: "drop.fill")
-                        .foregroundColor(.cyanAccent)
+                        .font(.title3)
+                        .foregroundColor(ThemeManager.shared.currentTheme.colors.accent)
                     Text("\(viewModel.inkBalance)")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .font(AppTypography.metricSmall)
+                        .foregroundColor(ThemeManager.shared.currentTheme.colors.textPrimary)
                     Text("Ink")
-                        .foregroundColor(.textSecondaryDark)
+                        .font(AppTypography.body)
+                        .foregroundColor(ThemeManager.shared.currentTheme.colors.textSecondary)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.surfaceDark)
-                .cornerRadius(12)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .premiumGlassCard(cornerRadius: 14, intensity: 0.1, padding: 0)
+                .coordinatedEntrance(delay: 0.1)
             }
             .padding()
 
             // Category Picker
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(ShopCategory.allCases, id: \.self) { category in
+                    ForEach(Array(ShopCategory.allCases.enumerated()), id: \.element) { index, category in
                         CategoryTab(
                             category: category,
                             isSelected: selectedCategory == category
                         ) {
                             selectedCategory = category
                         }
+                        .coordinatedEntrance(delay: 0.15 + Double(index) * 0.05)
                     }
                 }
                 .padding(.horizontal)
@@ -69,7 +71,6 @@ struct ShopView: View {
                 .padding()
             }
         }
-        .background(Color.canvasDark)
         // Toast for insufficient funds
         .overlay(alignment: .bottom) {
             if viewModel.showInsufficientFunds {
@@ -78,7 +79,7 @@ struct ShopView: View {
                     .padding(.bottom, 24)
             }
         }
-        .animation(.spring(response: 0.35, dampingFraction: 0.7), value: viewModel.showInsufficientFunds)
+        .animation(AppAnimation.component, value: viewModel.showInsufficientFunds)
     }
 }
 
@@ -88,21 +89,48 @@ struct CategoryTab: View {
     let category: ShopCategory
     let isSelected: Bool
     let action: () -> Void
+    @State private var isHovered = false
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Image(systemName: category.iconName)
+                    .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
                 Text(category.rawValue)
-                    .fontWeight(.medium)
+                    .font(AppTypography.body)
+                    .fontWeight(isSelected ? .semibold : .medium)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 18)
             .padding(.vertical, 10)
-            .background(isSelected ? Color.indigoPrimary : Color.surfaceDark)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(
+                        isSelected
+                        ? ThemeManager.shared.currentTheme.colors.primary
+                        : (isHovered ? Color.surfaceElevated : Color.surfaceDark)
+                    )
+            )
             .foregroundColor(.white)
-            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(
+                        isSelected ? Color.white.opacity(0.2) : Color.clear,
+                        lineWidth: 1
+                    )
+            )
+            .shadow(
+                color: isSelected ? ThemeManager.shared.currentTheme.colors.primary.opacity(0.4) : .clear,
+                radius: 8,
+                x: 0,
+                y: 3
+            )
         }
         .buttonStyle(.plain)
+        .scaleEffect(isHovered && !isSelected ? 1.03 : 1.0)
+        .animation(AppAnimation.micro, value: isHovered)
+        .onHover { hovering in
+            isHovered = hovering
+        }
     }
 }
 
@@ -114,9 +142,10 @@ struct ShopItemCard: View {
     let onPurchase: () -> Void
     let onEquip: () -> Void
     let onUnequip: () -> Void
+    @State private var isHovered = false
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             // Icon
             ZStack {
                 Circle()
@@ -127,23 +156,24 @@ struct ShopItemCard: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: 80, height: 80)
+                    .frame(width: 84, height: 84)
+                    .shadow(color: iconShadowColor, radius: 12, x: 0, y: 6)
 
                 Image(systemName: item.iconName)
-                    .font(.system(size: 32))
+                    .font(.system(size: 34))
                     .foregroundStyle(.white)
             }
 
             // Name & Description
-            VStack(spacing: 4) {
+            VStack(spacing: 6) {
                 Text(item.name)
-                    .font(.headline)
-                    .foregroundColor(.white)
+                    .font(AppTypography.h5)
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.textPrimary)
                     .lineLimit(1)
 
                 Text(item.itemDescription)
-                    .font(.caption)
-                    .foregroundColor(.textSecondaryDark)
+                    .font(AppTypography.bodySmall)
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.textSecondary)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
             }
@@ -151,42 +181,76 @@ struct ShopItemCard: View {
             // Action Button
             actionButton
         }
-        .padding()
+        .padding(20)
         .frame(maxWidth: .infinity)
-        .background(cardBackground)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(borderColor, lineWidth: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(cardBackgroundColor)
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(borderColor, lineWidth: item.isEquipped ? 2 : 1)
+        )
+        .shadow(
+            color: item.isEquipped ? ThemeManager.shared.currentTheme.colors.primary.opacity(0.2) : .clear,
+            radius: 12,
+            x: 0,
+            y: 6
+        )
+        .scaleEffect(isHovered ? 1.02 : 1.0)
+        .animation(AppAnimation.component, value: isHovered)
+        .onHover { hovering in
+            isHovered = hovering
+        }
     }
 
     // MARK: - Computed Helpers
 
     private var iconGradientColors: [Color] {
         if item.isEquipped {
-            return [.indigoPrimary.opacity(0.6), .cyanAccent.opacity(0.5)]
+            return [
+                ThemeManager.shared.currentTheme.colors.primary,
+                ThemeManager.shared.currentTheme.colors.accent
+            ]
         } else if item.isPurchased {
-            return [.success.opacity(0.3), .indigoPrimary.opacity(0.3)]
+            return [
+                ThemeManager.shared.currentTheme.colors.success.opacity(0.6),
+                ThemeManager.shared.currentTheme.colors.primary.opacity(0.4)
+            ]
         } else {
-            return [.indigoPrimary.opacity(0.3), .purple.opacity(0.3)]
+            return [
+                ThemeManager.shared.currentTheme.colors.primary.opacity(0.4),
+                ThemeManager.shared.currentTheme.colors.secondary.opacity(0.3)
+            ]
+        }
+    }
+    
+    private var iconShadowColor: Color {
+        if item.isEquipped {
+            return ThemeManager.shared.currentTheme.colors.primary.opacity(0.5)
+        } else if item.isPurchased {
+            return ThemeManager.shared.currentTheme.colors.success.opacity(0.3)
+        } else {
+            return ThemeManager.shared.currentTheme.colors.primary.opacity(0.2)
         }
     }
 
-    private var cardBackground: some View {
-        Group {
-            if item.isEquipped {
-                Color.indigoPrimary.opacity(0.15)
-            } else {
-                Color.surfaceDark
-            }
+    private var cardBackgroundColor: Color {
+        if item.isEquipped {
+            return ThemeManager.shared.currentTheme.colors.primary.opacity(0.12)
+        } else {
+            return Color.surfaceDark
         }
     }
 
     private var borderColor: Color {
-        if item.isEquipped { return Color.cyanAccent.opacity(0.6) }
-        if item.isPurchased { return Color.success.opacity(0.3) }
-        return Color.clear
+        if item.isEquipped { 
+            return ThemeManager.shared.currentTheme.colors.accent 
+        }
+        if item.isPurchased { 
+            return ThemeManager.shared.currentTheme.colors.success.opacity(0.5) 
+        }
+        return Color.white.opacity(0.08)
     }
 
     @ViewBuilder
@@ -198,50 +262,63 @@ struct ShopItemCard: View {
                     onUnequip()
                 } label: {
                     Label("Equipped", systemImage: "checkmark.circle.fill")
-                        .font(.subheadline)
+                        .font(AppTypography.body)
                         .fontWeight(.semibold)
-                        .foregroundColor(.cyanAccent)
+                        .foregroundColor(ThemeManager.shared.currentTheme.colors.accent)
                 }
                 .buttonStyle(.plain)
+                .pressable()
             } else {
                 // Purchased, not equipped
                 Button {
                     onEquip()
                 } label: {
                     Text("Equip")
-                        .font(.subheadline)
+                        .font(AppTypography.body)
                         .fontWeight(.semibold)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                        .background(Color.indigoPrimary.opacity(0.3))
-                        .foregroundColor(.indigoPrimary)
-                        .cornerRadius(20)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(ThemeManager.shared.currentTheme.colors.primary.opacity(0.2))
+                        )
+                        .foregroundColor(ThemeManager.shared.currentTheme.colors.primary)
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.indigoPrimary.opacity(0.5), lineWidth: 1)
+                                .stroke(ThemeManager.shared.currentTheme.colors.primary.opacity(0.4), lineWidth: 1.5)
                         )
                 }
                 .buttonStyle(.plain)
+                .pressable()
             }
         } else {
             // Not purchased — show buy button
             Button {
                 onPurchase()
             } label: {
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     Image(systemName: "drop.fill")
-                        .font(.caption)
+                        .font(.system(size: 12))
                     Text("\(item.price)")
                         .fontWeight(.bold)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(canAfford ? Color.indigoPrimary : Color.gray.opacity(0.4))
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(canAfford ? ThemeManager.shared.currentTheme.colors.primary : Color.gray.opacity(0.4))
+                )
                 .foregroundColor(canAfford ? .white : .white.opacity(0.5))
-                .cornerRadius(20)
+                .shadow(
+                    color: canAfford ? ThemeManager.shared.currentTheme.colors.primary.opacity(0.4) : .clear,
+                    radius: 8,
+                    x: 0,
+                    y: 3
+                )
             }
             .buttonStyle(.plain)
             .disabled(!canAfford)
+            .pressable()
         }
     }
 }
@@ -250,18 +327,18 @@ struct ShopItemCard: View {
 
 struct InsufficientFundsToast: View {
     var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "drop.fill")
-                .foregroundColor(.cyanAccent)
+        HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundColor(.orange)
             Text("Not enough Ink!")
+                .font(AppTypography.body)
                 .fontWeight(.medium)
                 .foregroundColor(.white)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(Color.surfaceDark)
-        .cornerRadius(24)
-        .shadow(color: .black.opacity(0.4), radius: 10, x: 0, y: 4)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 14)
+        .premiumGlassCard(cornerRadius: 28, intensity: 0.2, padding: 0)
+        .shadow(color: .black.opacity(0.5), radius: 20, x: 0, y: 10)
     }
 }
 

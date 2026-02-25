@@ -26,63 +26,63 @@ final class ThemeManager: ObservableObject {
             switch self {
             case .midnight:
                 return ThemeColors(
-                    primary: Color(red: 0.4, green: 0.3, blue: 0.9),
-                    secondary: Color(red: 0.3, green: 0.6, blue: 0.9),
-                    accent: Color(red: 0.0, green: 0.8, blue: 0.8),
-                    canvas: Color(red: 0.06, green: 0.06, blue: 0.12),
-                    surface: Color(red: 0.1, green: 0.1, blue: 0.18),
-                    textPrimary: .white,
-                    textSecondary: Color(white: 0.7),
-                    success: Color(red: 0.2, green: 0.8, blue: 0.4),
-                    error: Color(red: 0.9, green: 0.3, blue: 0.3)
+                    primary: Color(hex: "6366F1"),
+                    secondary: Color(hex: "8B5CF6"),
+                    accent: Color(hex: "06B6D4"),
+                    canvas: Color(hex: "0A0F1C"),
+                    surface: Color(hex: "141B2A"),
+                    textPrimary: Color(hex: "F1F5F9"),
+                    textSecondary: Color(hex: "CBD5E1"),
+                    success: Color(hex: "22C55E"),
+                    error: Color(hex: "EF4444")
                 )
             case .ocean:
                 return ThemeColors(
-                    primary: Color(red: 0.1, green: 0.5, blue: 0.8),
-                    secondary: Color(red: 0.0, green: 0.7, blue: 0.7),
-                    accent: Color(red: 0.4, green: 0.9, blue: 0.9),
-                    canvas: Color(red: 0.02, green: 0.08, blue: 0.15),
-                    surface: Color(red: 0.04, green: 0.12, blue: 0.22),
-                    textPrimary: .white,
-                    textSecondary: Color(red: 0.6, green: 0.8, blue: 0.9),
-                    success: Color(red: 0.2, green: 0.9, blue: 0.6),
-                    error: Color(red: 1.0, green: 0.4, blue: 0.4)
+                    primary: Color(hex: "0EA5E9"),
+                    secondary: Color(hex: "06B6D4"),
+                    accent: Color(hex: "22D3EE"),
+                    canvas: Color(hex: "020617"),
+                    surface: Color(hex: "0B1221"),
+                    textPrimary: Color(hex: "F0F9FF"),
+                    textSecondary: Color(hex: "7DD3FC"),
+                    success: Color(hex: "34D399"),
+                    error: Color(hex: "FCA5A5")
                 )
             case .forest:
                 return ThemeColors(
-                    primary: Color(red: 0.2, green: 0.6, blue: 0.4),
-                    secondary: Color(red: 0.4, green: 0.7, blue: 0.3),
-                    accent: Color(red: 0.8, green: 0.9, blue: 0.3),
-                    canvas: Color(red: 0.05, green: 0.1, blue: 0.08),
-                    surface: Color(red: 0.08, green: 0.15, blue: 0.12),
-                    textPrimary: .white,
-                    textSecondary: Color(red: 0.7, green: 0.85, blue: 0.75),
-                    success: Color(red: 0.4, green: 0.9, blue: 0.5),
-                    error: Color(red: 0.9, green: 0.4, blue: 0.3)
+                    primary: Color(hex: "22C55E"),
+                    secondary: Color(hex: "84CC16"),
+                    accent: Color(hex: "A3E635"),
+                    canvas: Color(hex: "052E16"),
+                    surface: Color(hex: "0A3D1E"),
+                    textPrimary: Color(hex: "F0FDF4"),
+                    textSecondary: Color(hex: "86EFAC"),
+                    success: Color(hex: "4ADE80"),
+                    error: Color(hex: "F87171")
                 )
             case .sunset:
                 return ThemeColors(
-                    primary: Color(red: 0.9, green: 0.4, blue: 0.2),
-                    secondary: Color(red: 0.95, green: 0.6, blue: 0.3),
-                    accent: Color(red: 1.0, green: 0.8, blue: 0.4),
-                    canvas: Color(red: 0.12, green: 0.06, blue: 0.06),
-                    surface: Color(red: 0.18, green: 0.1, blue: 0.1),
-                    textPrimary: .white,
-                    textSecondary: Color(red: 0.9, green: 0.8, blue: 0.7),
-                    success: Color(red: 0.5, green: 0.9, blue: 0.5),
-                    error: Color(red: 1.0, green: 0.3, blue: 0.3)
+                    primary: Color(hex: "F97316"),
+                    secondary: Color(hex: "FB923C"),
+                    accent: Color(hex: "FBBF24"),
+                    canvas: Color(hex: "2A0A0A"),
+                    surface: Color(hex: "3D1212"),
+                    textPrimary: Color(hex: "FFF7ED"),
+                    textSecondary: Color(hex: "FED7AA"),
+                    success: Color(hex: "86EFAC"),
+                    error: Color(hex: "FCA5A5")
                 )
             case .lavender:
                 return ThemeColors(
-                    primary: Color(red: 0.6, green: 0.4, blue: 0.8),
-                    secondary: Color(red: 0.8, green: 0.5, blue: 0.9),
-                    accent: Color(red: 0.9, green: 0.7, blue: 1.0),
-                    canvas: Color(red: 0.08, green: 0.06, blue: 0.12),
-                    surface: Color(red: 0.12, green: 0.1, blue: 0.18),
-                    textPrimary: .white,
-                    textSecondary: Color(red: 0.85, green: 0.8, blue: 0.9),
-                    success: Color(red: 0.4, green: 0.9, blue: 0.6),
-                    error: Color(red: 0.95, green: 0.4, blue: 0.5)
+                    primary: Color(hex: "A855F7"),
+                    secondary: Color(hex: "C084FC"),
+                    accent: Color(hex: "E9D5FF"),
+                    canvas: Color(hex: "1A0B2E"),
+                    surface: Color(hex: "261241"),
+                    textPrimary: Color(hex: "FAF5FF"),
+                    textSecondary: Color(hex: "D8B4FE"),
+                    success: Color(hex: "6EE7B7"),
+                    error: Color(hex: "FDA4AF")
                 )
             }
         }

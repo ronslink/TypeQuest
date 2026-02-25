@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension Color {
-    // MARK: - Deep Ocean Brand Colors
+    // MARK: - Deep Ocean Brand Colors (2025 Refined)
     
     static let indigoPrimary = Color(hex: "6366F1")
     static let indigoHover = Color(hex: "4F46E5")
@@ -10,18 +10,27 @@ extension Color {
     static let cyanAccent = Color(hex: "06B6D4")
     static let cyanHover = Color(hex: "0891B2")
     
-    // MARK: - Backgrounds
+    // MARK: - Backgrounds (2025 Refined - Deeper for OLED)
     
     static let canvasLight = Color(hex: "F8FAFC") // Slate 50
-    static let canvasDark = Color(hex: "0F172A")  // Slate 900
+    /// Refined darker canvas for better OLED contrast and depth
+    static let canvasDark = Color(hex: "0A0F1C")  // Deeper than Slate 900
+    /// Alternate canvas for layered views
+    static let canvasElevated = Color(hex: "0F172A")  // Original Slate 900
     
     static let surfaceLight = Color(hex: "FFFFFF")
-    static let surfaceDark = Color(hex: "1E293B") // Slate 800
+    /// Refined surface for better hierarchy distinction
+    static let surfaceDark = Color(hex: "141B2A")  // Refined Slate 800
+    /// Elevated surface for cards on top of surface
+    static let surfaceElevated = Color(hex: "1E293B")  // Original Slate 800
     
-    // MARK: - Semantic Colors
+    // MARK: - Semantic Colors (2025 Refined - More Vibrant)
     
-    static let success = Color(hex: "10B981") // Emerald 500
+    /// More vibrant success color for better visibility
+    static let success = Color(hex: "22C55E") // Refined Emerald
+    static let successDimmed = Color(hex: "10B981") // Original for compatibility
     static let error = Color(hex: "EF4444")   // Red 500
+    static let errorSoft = Color(hex: "F87171") // Softer red for backgrounds
     static let warning = Color(hex: "F59E0B")  // Amber 500
     static let focus = Color(hex: "06B6D4")    // Cyan
     
@@ -33,7 +42,16 @@ extension Color {
     
     static let textPrimaryDark = Color(hex: "F1F5F9")  // Slate 100
     static let textSecondaryDark = Color(hex: "CBD5E1") // Slate 300
-    static let textTertiaryDark = Color(hex: "94A3B8")  // Slate 400
+    static let textTertiaryDark = Color(hex: "64748B")  // Slate 500 - refined for better contrast
+    
+    // MARK: - Glass Effect Colors
+    
+    /// Glass stroke for light mode
+    static let glassStrokeLight = Color.white.opacity(0.25)
+    /// Glass stroke for dark mode
+    static let glassStrokeDark = Color.white.opacity(0.15)
+    /// Glass background intensity
+    static let glassIntensity: Double = 0.15
     
     // MARK: - Helper for Hex Colors
     

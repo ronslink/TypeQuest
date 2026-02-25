@@ -11,27 +11,24 @@ struct GameSelectionView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.canvasDark.ignoresSafeArea()
-
-            ScrollView {
-                VStack(spacing: 0) {
-                    // Header
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("arcade_mode".localized)
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                            Text("Choose your challenge")
-                                .font(.subheadline)
-                                .foregroundColor(.textSecondaryDark)
-                        }
-                        Spacer()
+        ScrollView {
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("arcade_mode".localized)
+                            .font(AppTypography.h1)
+                            .foregroundColor(ThemeManager.shared.currentTheme.colors.textPrimary)
+                        Text("Choose your challenge")
+                            .font(AppTypography.body)
+                            .foregroundColor(ThemeManager.shared.currentTheme.colors.textSecondary)
                     }
-                    .padding(.horizontal, 32)
-                    .padding(.top, 28)
-                    .padding(.bottom, 24)
+                    Spacer()
+                }
+                .padding(.horizontal, 32)
+                .padding(.top, 28)
+                .padding(.bottom, 24)
+                .coordinatedEntrance(delay: 0)
 
                     // Game Cards Grid
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 320), spacing: 20)], spacing: 20) {
@@ -41,11 +38,12 @@ struct GameSelectionView: View {
                                 description: "rain_desc".localized,
                                 icon: "cloud.rain.fill",
                                 badge: "REFLEX",
-                                color1: Color(red: 0.0, green: 0.65, blue: 0.85),
-                                color2: Color(red: 0.1, green: 0.35, blue: 0.75)
+                                color1: Color(hex: "0EA5E9"),
+                                color2: Color(hex: "1E40AF")
                             )
                         }
                         .buttonStyle(.plain)
+                        .coordinatedEntrance(delay: 0.1)
 
                         NavigationLink(destination: RacerGameView()) {
                             GameCard(
@@ -53,11 +51,12 @@ struct GameSelectionView: View {
                                 description: "racer_desc".localized,
                                 icon: "car.fill",
                                 badge: "SPEED",
-                                color1: Color(red: 0.95, green: 0.45, blue: 0.1),
-                                color2: Color(red: 0.75, green: 0.2, blue: 0.15)
+                                color1: Color(hex: "F97316"),
+                                color2: Color(hex: "DC2626")
                             )
                         }
                         .buttonStyle(.plain)
+                        .coordinatedEntrance(delay: 0.2)
 
                         NavigationLink(destination: RPGGameView()) {
                             GameCard(
@@ -65,11 +64,12 @@ struct GameSelectionView: View {
                                 description: "spell_desc".localized,
                                 icon: "wand.and.stars",
                                 badge: "STRATEGY",
-                                color1: Color(red: 0.55, green: 0.25, blue: 0.85),
-                                color2: Color(red: 0.35, green: 0.15, blue: 0.65)
+                                color1: Color(hex: "9333EA"),
+                                color2: Color(hex: "581C87")
                             )
                         }
                         .buttonStyle(.plain)
+                        .coordinatedEntrance(delay: 0.3)
                     }
                     .padding(.horizontal, 32)
                     .padding(.bottom, 40)
@@ -79,8 +79,8 @@ struct GameSelectionView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("Arcade")
-                    .font(.headline)
-                    .foregroundColor(.white)
+                    .font(AppTypography.h4)
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.textPrimary)
             }
         }
     }
@@ -99,88 +99,98 @@ struct GameCard: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            // Card background
-            RoundedRectangle(cornerRadius: 16)
+            // Card background with enhanced depth
+            RoundedRectangle(cornerRadius: 20)
                 .fill(
                     LinearGradient(
-                        colors: [color1.opacity(isHovered ? 1.0 : 0.85),
-                                 color2.opacity(isHovered ? 1.0 : 0.85)],
+                        colors: [
+                            color1.opacity(isHovered ? 1.0 : 0.9),
+                            color2.opacity(isHovered ? 1.0 : 0.9)
+                        ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                )
                 .shadow(
-                    color: color1.opacity(isHovered ? 0.45 : 0.2),
-                    radius: isHovered ? 20 : 10,
-                    x: 0, y: isHovered ? 8 : 4
+                    color: color1.opacity(isHovered ? 0.5 : 0.25),
+                    radius: isHovered ? 24 : 12,
+                    x: 0, y: isHovered ? 10 : 5
                 )
 
             // Decorative large icon watermark
             Image(systemName: icon)
-                .font(.system(size: 100))
-                .foregroundColor(.white.opacity(0.07))
-                .offset(x: 20, y: -10)
+                .font(.system(size: 110))
+                .foregroundColor(.white.opacity(0.08))
+                .offset(x: 25, y: -15)
                 .clipped()
 
             // Content
             HStack(spacing: 20) {
-                // Icon
+                // Icon with enhanced styling
                 ZStack {
                     Circle()
-                        .fill(.white.opacity(0.15))
-                        .frame(width: 64, height: 64)
+                        .fill(.white.opacity(0.2))
+                        .frame(width: 68, height: 68)
+                        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    
                     Image(systemName: icon)
-                        .font(.system(size: 28, weight: .medium))
+                        .font(.system(size: 30, weight: .medium))
                         .foregroundColor(.white)
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(title)
-                        .font(.system(size: 18, weight: .bold))
+                        .font(AppTypography.h4)
                         .foregroundColor(.white)
 
                     Text(description)
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.85))
+                        .font(AppTypography.bodySmall)
+                        .foregroundColor(.white.opacity(0.9))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
                     if isLocked {
                         Label("Locked", systemImage: "lock.fill")
-                            .font(.caption)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.black.opacity(0.3))
-                            .cornerRadius(6)
+                            .font(AppTypography.caption)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(Color.black.opacity(0.35))
+                            .cornerRadius(8)
                             .foregroundColor(.white)
-                            .padding(.top, 2)
+                            .padding(.top, 4)
                     } else {
                         Text("Play Now →")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.9))
-                            .padding(.top, 2)
+                            .font(AppTypography.bodySmall)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white.opacity(0.95))
+                            .padding(.top, 4)
                     }
                 }
 
                 Spacer()
             }
-            .padding(20)
+            .padding(24)
 
             // Badge chip
             Text(badge)
-                .font(.system(size: 9, weight: .bold))
-                .tracking(0.8)
+                .font(.system(size: 10, weight: .bold))
+                .tracking(1)
                 .foregroundColor(color1)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.white.opacity(0.9))
-                .cornerRadius(8)
-                .padding(12)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(.white.opacity(0.95))
+                .cornerRadius(10)
+                .padding(14)
+                .shadow(color: color1.opacity(0.3), radius: 4, x: 0, y: 2)
         }
-        .frame(height: 130)
-        .opacity(isLocked ? 0.55 : 1.0)
+        .frame(height: 140)
+        .opacity(isLocked ? 0.5 : 1.0)
         .scaleEffect(isHovered && !isLocked ? 1.02 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isHovered)
+        .animation(AppAnimation.component, value: isHovered)
         .onHover { hovering in
             isHovered = hovering && !isLocked
         }

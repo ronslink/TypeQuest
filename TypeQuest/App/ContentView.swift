@@ -33,31 +33,34 @@ struct ContentView: View {
 
     @ViewBuilder
     private var detailView: some View {
-        switch navigationManager.selectedTab {
-        case .practice:
-            TypingView()
-                .environmentObject(navigationManager)
-        case .curriculum:
-            NavigationStack {
-                SkillTreeView()
-            }
-        case .shop:
-            ShopView()
-        case .games:
-            NavigationStack {
-                GameSelectionView()
+        Group {
+            switch navigationManager.selectedTab {
+            case .practice:
+                EnhancedTypingView()
                     .environmentObject(navigationManager)
+            case .curriculum:
+                NavigationStack {
+                    SkillTreeView()
+                }
+            case .shop:
+                ShopView()
+            case .games:
+                NavigationStack {
+                    GameSelectionView()
+                        .environmentObject(navigationManager)
+                }
+            case .stats:
+                StatisticsView()
+            case .leaderboards:
+                LeaderboardsView()
+            case .settings:
+                SettingsView()
+                    .environmentObject(navigationManager)
+            case .none:
+                WelcomePlaceholder()
             }
-        case .stats:
-            StatisticsView()
-        case .leaderboards:
-            LeaderboardsView()
-        case .settings:
-            SettingsView()
-                .environmentObject(navigationManager)
-        case .none:
-            WelcomePlaceholder()
         }
+        .appBackground()
     }
 }
 
@@ -104,6 +107,14 @@ struct SidebarView: View {
             Divider()
                 .opacity(0.2)
                 .padding(.horizontal, 8)
+            
+            // Daily Streak Widget
+            if let user = dataManager.currentUser, user.currentStreak > 0 {
+                DailyStreakWidget(streak: user.currentStreak)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .coordinatedEntrance(delay: 0.3)
+            }
 
             // Settings pinned at bottom
             SidebarItem(icon: "gear", label: "Settings", tag: .settings, selection: $navigationManager.selectedTab)
@@ -113,7 +124,7 @@ struct SidebarView: View {
         .background(
             VisualEffectBackground(material: .sidebar, blendingMode: .behindWindow)
         )
-        .navigationSplitViewColumnWidth(min: 200, ideal: 220, max: 260)
+        .navigationSplitViewColumnWidth(min: 220, ideal: 240, max: 280)
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 Button {
@@ -129,66 +140,87 @@ struct SidebarView: View {
     }
 
     private var profileHeader: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             ZStack {
+                // Avatar background with glow
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [.indigoPrimary, .cyanAccent],
+                            colors: [
+                                ThemeManager.shared.currentTheme.colors.primary,
+                                ThemeManager.shared.currentTheme.colors.accent
+                            ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: 36, height: 36)
+                    .frame(width: 40, height: 40)
+                    .shadow(
+                        color: ThemeManager.shared.currentTheme.colors.primary.opacity(0.4),
+                        radius: 8,
+                        x: 0,
+                        y: 4
+                    )
+                
                 if let initial = dataManager.currentUser?.username.first {
                     Text(String(initial).uppercased())
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
                 } else {
                     Image(systemName: "person.fill")
-                        .font(.system(size: 14))
+                        .font(.system(size: 16))
                         .foregroundColor(.white)
                 }
             }
 
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(dataManager.currentUser?.username ?? "TypeQuest")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(AppTypography.h5)
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                HStack(spacing: 6) {
-                        Text("Lv.\(dataManager.currentUser?.currentLevel ?? 1)")
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(.secondary)
-                        Text("·")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary.opacity(0.5))
+                
+                HStack(spacing: 8) {
+                    // Level badge
+                    HStack(spacing: 2) {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 8))
+                        Text("\(dataManager.currentUser?.currentLevel ?? 1)")
+                            .font(.system(size: 10, weight: .bold))
+                    }
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.primary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule()
+                            .fill(ThemeManager.shared.currentTheme.colors.primary.opacity(0.15))
+                    )
+                    
+                    // Streak
+                    HStack(spacing: 3) {
                         Image(systemName: "flame.fill")
                             .font(.system(size: 9))
-                            .foregroundColor(
-                                (dataManager.currentUser?.currentStreak ?? 0) > 0
-                                ? .orange : .secondary.opacity(0.4)
-                            )
                         Text("\(dataManager.currentUser?.currentStreak ?? 0)")
                             .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(
-                                (dataManager.currentUser?.currentStreak ?? 0) > 0
-                                ? .orange : .secondary
-                            )
-                        Text("·")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary.opacity(0.5))
+                    }
+                    .foregroundColor(
+                        (dataManager.currentUser?.currentStreak ?? 0) > 0
+                        ? .orange : .secondary.opacity(0.4)
+                    )
+                    
+                    // Currency
+                    HStack(spacing: 3) {
                         Image(systemName: "drop.fill")
                             .font(.system(size: 9))
-                            .foregroundColor(.cyanAccent)
                         Text("\(dataManager.currentUser?.inkCurrency ?? 0)")
                             .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(.cyanAccent)
                     }
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.accent)
+                }
             }
 
             Spacer()
         }
+        .padding(.horizontal, 4)
     }
 }
 
@@ -199,14 +231,14 @@ struct SidebarSection<Content: View>: View {
     @ViewBuilder let content: () -> Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(.secondary)
-                .tracking(0.8)
-                .padding(.leading, 10)
-                .padding(.top, 14)
-                .padding(.bottom, 2)
+                .tracking(1.2)
+                .padding(.leading, 12)
+                .padding(.top, 16)
+                .padding(.bottom, 4)
             content()
         }
     }
@@ -217,7 +249,7 @@ struct SidebarSection<Content: View>: View {
 struct SidebarItem: View {
     let icon: String
     let label: String
-    let tag: ContentView.NavigationItem
+    let tag: ContentView.NavigationItem?
     @Binding var selection: ContentView.NavigationItem?
 
     @State private var isHovered = false
@@ -227,11 +259,11 @@ struct SidebarItem: View {
         Button {
             selection = tag
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: 10) {
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
-                    .foregroundColor(isSelected ? .indigoPrimary : .secondary)
-                    .frame(width: 18, height: 18)
+                    .font(.system(size: 15, weight: isSelected ? .semibold : .regular))
+                    .foregroundColor(isSelected ? ThemeManager.shared.currentTheme.colors.primary : .secondary)
+                    .frame(width: 20, height: 20)
 
                 Text(label)
                     .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
@@ -239,20 +271,27 @@ struct SidebarItem: View {
 
                 Spacer()
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
             .background(
-                RoundedRectangle(cornerRadius: 7)
+                RoundedRectangle(cornerRadius: 8)
                     .fill(
                         isSelected
-                        ? Color.indigoPrimary.opacity(0.18)
-                        : (isHovered ? Color.primary.opacity(0.07) : Color.clear)
+                        ? ThemeManager.shared.currentTheme.colors.primary.opacity(0.15)
+                        : (isHovered ? Color.primary.opacity(0.06) : Color.clear)
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(
+                        isSelected ? ThemeManager.shared.currentTheme.colors.primary.opacity(0.3) : Color.clear,
+                        lineWidth: 1
                     )
             )
         }
         .buttonStyle(.plain)
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.12)) {
+            withAnimation(AppAnimation.micro) {
                 isHovered = hovering
             }
         }
@@ -283,19 +322,149 @@ struct VisualEffectBackground: NSViewRepresentable {
 
 struct WelcomePlaceholder: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "keyboard")
-                .font(.system(size: 52))
-                .foregroundStyle(
-                    LinearGradient(colors: [.indigoPrimary, .cyanAccent],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
-            Text("Select an item from the sidebar")
-                .font(.title3)
-                .foregroundColor(.secondary)
+        VStack(spacing: 24) {
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                ThemeManager.shared.currentTheme.colors.primary.opacity(0.2),
+                                ThemeManager.shared.currentTheme.colors.accent.opacity(0.1)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 120, height: 120)
+                    .blur(radius: 20)
+                
+                Image(systemName: "keyboard.fill")
+                    .font(.system(size: 56, weight: .medium))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [
+                                ThemeManager.shared.currentTheme.colors.primary,
+                                ThemeManager.shared.currentTheme.colors.accent
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .shadow(
+                        color: ThemeManager.shared.currentTheme.colors.primary.opacity(0.4),
+                        radius: 20,
+                        x: 0,
+                        y: 10
+                    )
+            }
+            
+            VStack(spacing: 8) {
+                Text("Welcome to TypeQuest")
+                    .font(AppTypography.h2)
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.textPrimary)
+                
+                Text("Select an item from the sidebar to begin")
+                    .font(AppTypography.body)
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.textSecondary)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.canvasDark)
+        .coordinatedEntrance(delay: 0)
+    }
+}
+
+// MARK: - Daily Streak Widget
+
+struct DailyStreakWidget: View {
+    let streak: Int
+    
+    private var progress: Double {
+        min(Double(streak) / 7.0, 1.0)
+    }
+    
+    private var milestoneText: String {
+        if streak >= 30 { return "Monthly Master!" }
+        if streak >= 7 { return "Weekly Warrior!" }
+        if streak >= 3 { return "Building Momentum!" }
+        return "Keep it up!"
+    }
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // Progress ring with flame
+            ZStack {
+                // Background ring
+                Circle()
+                    .stroke(Color.orange.opacity(0.15), lineWidth: 4)
+                    .frame(width: 48, height: 48)
+                
+                // Progress ring
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        AngularGradient(
+                            colors: [.orange, .red, .orange],
+                            center: .center
+                        ),
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .frame(width: 48, height: 48)
+                    .rotationEffect(.degrees(-90))
+                    .animation(AppAnimation.component, value: progress)
+                
+                // Flame icon
+                Image(systemName: "flame.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(.orange)
+                    .shadow(color: .orange.opacity(0.6), radius: 4)
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(streak) Day Streak")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(.orange)
+                
+                Text(milestoneText)
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+            
+            Spacer()
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.orange.opacity(0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.orange.opacity(0.15), lineWidth: 1)
+                )
+        )
+    }
+}
+
+// MARK: - Progress Ring Component
+
+struct ProgressRing: View {
+    let progress: Double
+    let color: Color
+    var lineWidth: CGFloat = 6
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(color.opacity(0.15), lineWidth: lineWidth)
+            
+            Circle()
+                .trim(from: 0, to: min(progress, 1.0))
+                .stroke(
+                    color,
+                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(AppAnimation.component, value: progress)
+        }
     }
 }
 

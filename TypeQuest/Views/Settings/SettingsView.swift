@@ -11,14 +11,14 @@ struct SettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: 28) {
                 // Header
                 Text("settings".localized)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .font(AppTypography.h1)
+                    .foregroundColor(ThemeManager.shared.currentTheme.colors.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
+                    .coordinatedEntrance(delay: 0)
                 
                 // Account Section
                 SettingsSection(title: "account".localized) {
@@ -286,7 +286,6 @@ struct SettingsView: View {
             }
             .padding()
         }
-        .background(Color.canvasDark)
         .onAppear {
             CloudKitManager.shared.checkAccountStatus()
             // Sync localizer on appear
@@ -309,19 +308,19 @@ struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title.uppercased())
-                .font(.caption)
+                .font(AppTypography.caption)
                 .fontWeight(.bold)
-                .foregroundColor(.textTertiaryDark)
-                .padding(.leading, 8)
+                .foregroundColor(ThemeManager.shared.currentTheme.colors.textSecondary.opacity(0.7))
+                .tracking(1.2)
+                .padding(.leading, 4)
             
             VStack(spacing: 16) {
                 content
             }
-            .padding()
-            .background(Color.surfaceDark)
-            .cornerRadius(16)
+            .premiumGlassCard(cornerRadius: 16, intensity: 0.1, padding: 20)
+        }
+        .coordinatedEntrance(delay: 0)
     }
-}
 }
 
 // MARK: - Theme Preview Card
@@ -333,48 +332,58 @@ struct ThemePreviewCard: View {
     
     var body: some View {
         Button(action: onSelect) {
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 // Color preview
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: 14)
                         .fill(theme.colors.canvas)
-                        .frame(width: 80, height: 60)
+                        .frame(width: 84, height: 64)
+                        .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
                     
                     if isLocked {
                         Image(systemName: "lock.fill")
-                            .foregroundColor(.white.opacity(0.8))
+                            .foregroundColor(.white.opacity(0.9))
                             .font(.title2)
                     } else {
-                        HStack(spacing: 4) {
+                        HStack(spacing: 5) {
                             Circle()
                                 .fill(theme.colors.primary)
-                                .frame(width: 16, height: 16)
+                                .frame(width: 18, height: 18)
+                                .shadow(radius: 2)
                             Circle()
                                 .fill(theme.colors.secondary)
-                                .frame(width: 16, height: 16)
+                                .frame(width: 18, height: 18)
+                                .shadow(radius: 2)
                             Circle()
                                 .fill(theme.colors.accent)
-                                .frame(width: 16, height: 16)
+                                .frame(width: 18, height: 18)
+                                .shadow(radius: 2)
                         }
                     }
                 }
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(isSelected ? theme.colors.primary : Color.clear, lineWidth: 3)
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(
+                            isSelected ? theme.colors.primary : Color.white.opacity(0.1),
+                            lineWidth: isSelected ? 3 : 1
+                        )
                 )
+                .scaleEffect(isSelected ? 1.05 : 1.0)
+                .animation(AppAnimation.micro, value: isSelected)
                 
                 // Theme name
                 HStack(spacing: 4) {
                     Image(systemName: theme.iconName)
                         .font(.caption)
                     Text(theme.displayName)
-                        .font(.caption)
+                        .font(AppTypography.bodySmall)
                         .fontWeight(.medium)
                 }
-                .foregroundColor(isSelected ? theme.colors.primary : .textSecondaryDark)
+                .foregroundColor(isSelected ? theme.colors.primary : ThemeManager.shared.currentTheme.colors.textSecondary)
             }
         }
         .buttonStyle(.plain)
+        .pressable()
     }
 }
 
